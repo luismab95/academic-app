@@ -1,28 +1,21 @@
-import {PaperProvider, Text} from 'react-native-paper';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {appTheme} from './presentation/theme/theme';
-import IonIcon from '@react-native-vector-icons/ionicons';
+import {NavigationContainer} from '@react-navigation/native';
+import {StackNavigator} from './presentation/navigation/StackNavigator';
+import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
+import {EvaIconsPack} from '@ui-kitten/eva-icons';
+import {appTheme, appThemeNavigation} from './presentation/theme/theme';
+import * as eva from '@eva-design/eva';
 
 function App(): React.JSX.Element {
   return (
-    <PaperProvider
-      theme={appTheme()}
-      settings={{
-        icon: props => <IonIcon {...(props as any)} />,
-      }}>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: appTheme().colors.background,
-        }}>
-        <Text style={{fontSize: 18, textAlign: 'center', marginTop: 20}}>
-          Welcome, but there is nothing to see here!
-        </Text>
-      </SafeAreaView>
-      j
-    </PaperProvider>
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={appTheme()}>
+        <NavigationContainer theme={{...(appThemeNavigation() as any)}}>
+          {/* //TODO AGREGAR AUTH PROVIDER */}
+          <StackNavigator />
+        </NavigationContainer>
+      </ApplicationProvider>
+    </>
   );
 }
 
