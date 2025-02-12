@@ -1,6 +1,8 @@
 import React from 'react';
 import {View} from 'react-native';
 import {
+  Icon,
+  IconElement,
   Layout,
   Text,
   TopNavigation,
@@ -9,7 +11,13 @@ import {
 import {TouchableWebElement} from '@ui-kitten/components/devsupport';
 import {appThemeNavigation} from '../../theme/theme';
 
-export const TopAuthNavigation = (): React.ReactElement => {
+interface Props {
+  onPressProfile: () => void;
+}
+
+export const TopAuthNavigation = ({
+  onPressProfile,
+}: Props): React.ReactElement => {
   const renderAvatar = (): React.ReactElement => (
     <View
       style={{
@@ -29,16 +37,24 @@ export const TopAuthNavigation = (): React.ReactElement => {
           justifyContent: 'center',
           marginHorizontal: 10,
           color: 'white',
-          fontSize: 20,
+          fontSize: 14,
           fontWeight: 'bold',
         }}>
-        L
+        LB
       </Text>
     </View>
   );
 
+  const profileIcon = (props: any): IconElement => (
+    <Icon {...props} name="more-vertical-outline" />
+  );
+
   const renderLeftAction = (): TouchableWebElement => (
     <TopNavigationAction icon={renderAvatar} />
+  );
+
+  const renderRightAction = (): TouchableWebElement => (
+    <TopNavigationAction onPress={onPressProfile} icon={profileIcon} />
   );
 
   const renderTitle = (): TouchableWebElement => (
@@ -54,6 +70,7 @@ export const TopAuthNavigation = (): React.ReactElement => {
         alignment="start"
         title={renderTitle}
         accessoryLeft={renderLeftAction}
+        accessoryRight={renderRightAction}
       />
     </Layout>
   );

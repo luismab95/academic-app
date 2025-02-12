@@ -1,4 +1,3 @@
-import {StyleSheet} from 'react-native';
 import {Icon, useTheme} from '@ui-kitten/components';
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
 }
 
 export const MyIcon = ({name, color, width = 32, height = 32}: Props) => {
-  const theme = useTheme();
+  const theme = useTheme();    
 
   if (!color) {
     color = theme['text-basic-color'];

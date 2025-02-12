@@ -21,7 +21,7 @@ interface TopNavigationSimpleUsageShowcaseProps {
   title: string;
 }
 
-export const TopNavigationSimpleUsageShowcase = ({
+export const TopNavigationApp = ({
   title,
 }: TopNavigationSimpleUsageShowcaseProps): React.ReactElement => (
   <TopNavigation

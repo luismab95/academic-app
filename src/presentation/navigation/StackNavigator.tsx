@@ -1,11 +1,22 @@
-import {createStackNavigator} from '@react-navigation/stack';
-import {HomeScreen, LoadingScreen, SignInScreen} from '../screens';
-import {SignUpScreen} from '../screens/auth/SignUpScreen';
-import {SignInMfaScreen} from '../screens/auth/SignInMfaScreen';
-import {ResetPasswordScreen} from '../screens/auth/ResetPasswrodScreen';
-import {ForgotPasswordScreen} from '../screens/auth/ForgotPasswordScreen';
-import {VerifyResetPasswordScreen} from '../screens/auth/VerifyResetPasswordScreen';
-import {LandingScreen} from '../screens/home/LandingScreen';
+import {
+  createStackNavigator,
+  StackCardStyleInterpolator,
+} from '@react-navigation/stack';
+import {
+  EditScreen,
+  ForgotPasswordScreen,
+  HomeScreen,
+  LandingScreen,
+  LoadingScreen,
+  PrivacyPolicyScreen,
+  ProfileScreen,
+  ResetPasswordScreen,
+  SecurityScreen,
+  SignInMfaScreen,
+  SignInScreen,
+  SignUpScreen,
+  VerifyResetPasswordScreen,
+} from '../screens';
 
 export type RootStackParams = {
   LoadingScreen: undefined;
@@ -17,33 +28,92 @@ export type RootStackParams = {
   ResetPasswordScreen: undefined;
   LandingScreen: undefined;
   HomeScreen: undefined;
+  ProfileScreen: undefined;
+  EditScreen: undefined;
+  SecurityScreen: undefined;
+  PrivacyPolicyScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParams>();
+
+const fadeAnimation: StackCardStyleInterpolator = ({current}) => {
+  return {
+    cardStyle: {
+      opacity: current.progress,
+    },
+  };
+};
 
 export const StackNavigator = () => {
   return (
     <Stack.Navigator
       initialRouteName="LoadingScreen"
       screenOptions={{headerShown: false}}>
-      <Stack.Screen name="LandingScreen" component={LandingScreen} />
-      <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
-      <Stack.Screen name="SignInScreen" component={SignInScreen} />
-      <Stack.Screen name="SignInMfaScreen" component={SignInMfaScreen} />
-      <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
       <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="LandingScreen"
+        component={LandingScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="LoadingScreen"
+        component={LoadingScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="SignInScreen"
+        component={SignInScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="SignInMfaScreen"
+        component={SignInMfaScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="SignUpScreen"
+        component={SignUpScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
         name="VerifyResetPasswordScreen"
         component={VerifyResetPasswordScreen}
       />
       <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
         name="ResetPasswordScreen"
         component={ResetPasswordScreen}
       />
       <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
         name="ForgotPasswordScreen"
         component={ForgotPasswordScreen}
       />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="HomeScreen"
+        component={HomeScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="ProfileScreen"
+        component={ProfileScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="EditScreen"
+        component={EditScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="SecurityScreen"
+        component={SecurityScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="PrivacyPolicyScreen"
+        component={PrivacyPolicyScreen}
+      />
     </Stack.Navigator>
   );
 };

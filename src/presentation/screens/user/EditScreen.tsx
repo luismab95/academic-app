@@ -1,35 +1,22 @@
-import {Button, Input, Layout, Text} from '@ui-kitten/components';
+import {Button, Divider, Input, Layout, Text} from '@ui-kitten/components';
 import {ScrollView} from 'react-native-gesture-handler';
 import {MyIcon} from '../../components/ui/Icon';
-import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
-import {useWindowDimensions} from 'react-native';
-import {useState} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {TopNavigationApp} from '../../components/ui/TopNavigation';
+import {UserAvatar} from '../../components';
 
-interface Props extends StackScreenProps<RootStackParams, 'SignUpScreen'> {}
+interface Props extends StackScreenProps<RootStackParams, 'EditScreen'> {}
 
-export const SignUpScreen = ({navigation}: Props) => {
-  const [secureTextEntry, setSecureTextEntry] = useState(false);
-
-  const {height} = useWindowDimensions();
-
-  const toggleSecureEntry = (): void => {
-    setSecureTextEntry(!secureTextEntry);
-  };
-
+export const EditScreen = ({navigation}: Props) => {
   return (
     <>
-      <TopNavigationApp title="" />
+      <TopNavigationApp title="Editar Perfil" />
       <Layout style={{flex: 1}}>
         <ScrollView style={{marginHorizontal: 40}}>
-          <Layout style={{paddingTop: height * 0.22}}>
-            <Text category="h1">Ingresa tus Datos para Crear tu Cuenta</Text>
-          </Layout>
-
-          {/* Space */}
-          <Layout style={{height: 40}} />
+          {/* AVATAR */}
+          <UserAvatar />
+          <Divider style={{marginVertical: 20}} />
 
           {/* Inputs */}
           <Layout style={{marginTop: 20}}>
@@ -89,30 +76,21 @@ export const SignUpScreen = ({navigation}: Props) => {
             <Layout style={{height: 10}} />
 
             <Input
-              placeholder="Contraseña"
+              placeholder="Telefono"
               autoCapitalize="none"
+              keyboardType="phone-pad"
               size="large"
-              secureTextEntry={!secureTextEntry}
               // value={form.password}
               // onChangeText={password => setForm({...form, password})}
               accessoryLeft={
-                <MyIcon name="lock-outline" width={20} height={20} />
-              }
-              accessoryRight={
-                <TouchableWithoutFeedback onPress={toggleSecureEntry}>
-                  <MyIcon
-                    name={!secureTextEntry ? 'eye' : 'eye-off'}
-                    width={20}
-                    height={20}
-                  />
-                </TouchableWithoutFeedback>
+                <MyIcon name="phone-outline" width={20} height={20} />
               }
               style={{marginBottom: 10}}
             />
           </Layout>
 
           {/* Button */}
-          <Layout style={{marginTop: 30}}></Layout>
+          <Layout style={{marginTop: 60}}></Layout>
           <Layout>
             <Button
               style={{borderRadius: 50}}
@@ -124,28 +102,10 @@ export const SignUpScreen = ({navigation}: Props) => {
                   {...evaProps}
                   style={{fontSize: 20, color: 'white'}}
                   category="label">
-                  Crear Cuenta
+                  Actualizar
                 </Text>
               )}
             </Button>
-          </Layout>
-
-          {/* Información para crear cuenta */}
-          <Layout style={{height: 50}} />
-          <Layout
-            style={{
-              alignItems: 'flex-end',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}>
-            <Text>¿Ya tienes una cuenta?</Text>
-            <Text
-              status="primary"
-              category="s1"
-              onPress={() => navigation.navigate('SignInScreen')}>
-              {'  '}
-              Iniciar Sesión{'  '}
-            </Text>
           </Layout>
 
           {/* Space */}
