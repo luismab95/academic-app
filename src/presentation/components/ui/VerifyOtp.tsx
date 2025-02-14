@@ -1,17 +1,70 @@
+import {useEffect, useState} from 'react';
+import {Image} from 'react-native';
 import {Button, Layout, Text} from '@ui-kitten/components';
-import {useWindowDimensions} from 'react-native';
 import {Opt} from './Opt';
+import {LoadingIndicator} from './LoadingIndicator';
 
 interface Props {
-  onVerifyOtp: () => void;
+  message: string;
+  isLoading: boolean;
+  onVerifyOtp: (otp: string) => void;
   onResendOtp: () => void;
 }
 
-export const VerifyOtp = ({onVerifyOtp, onResendOtp}: Props) => {
-  const {height} = useWindowDimensions();
+export const VerifyOtp = ({
+  message,
+  isLoading,
+  onVerifyOtp,
+  onResendOtp,
+}: Props) => {
+  const [seconds, setSeconds] = useState(300);
+  const [isValidOtp, setIsValidOtp] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [sendOtp, setSendOtp] = useState(false);
+
+  useEffect(() => {
+    if (seconds <= 0) {
+      setSendOtp(true);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setSeconds(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [seconds]);
+
+  const onSendOtp = () => {
+    setSendOtp(false);
+    setSeconds(300);
+    onResendOtp();
+  };
+
+  const onSetValidOtp = (isValid: boolean) => {
+    setIsValidOtp(isValid);
+  };
+
+  const onGetOtp = (otp: string) => {
+    setOtp(otp);
+  };
 
   return (
-    <Layout style={{paddingTop: height * 0.08}}>
+    <Layout style={{paddingTop: 0}}>
+      <Layout
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingHorizontal: 40,
+          marginTop: 20,
+        }}>
+        <Image
+          style={{height: 400, width: 400}}
+          source={require('../../../assets/images/otp.png')}
+        />
+      </Layout>
+
       {/* Space */}
       <Layout style={{height: 50}} />
 
@@ -22,11 +75,11 @@ export const VerifyOtp = ({onVerifyOtp, onResendOtp}: Props) => {
           flexDirection: 'row',
           justifyContent: 'center',
         }}>
-        <Text>El código ha sido enviado a lu***********</Text>
+        <Text style={{textAlign: 'center'}}>{message}</Text>
       </Layout>
 
       {/* Space */}
-      <Layout style={{height: 60}} />
+      <Layout style={{height: 40}} />
 
       {/* Inputs */}
       <Layout
@@ -35,26 +88,45 @@ export const VerifyOtp = ({onVerifyOtp, onResendOtp}: Props) => {
           justifyContent: 'center',
           alignContent: 'center',
         }}>
-        <Opt lenght={4} />
+        <Opt length={4} onComplete={onGetOtp} isValid={onSetValidOtp} />
       </Layout>
 
       {/* Space */}
-      <Layout style={{height: 60}} />
+      <Layout style={{height: 40}} />
 
-      {/* Información para reenviar código */}
-      <Layout
-        style={{
-          alignItems: 'flex-end',
-          flexDirection: 'row',
-          justifyContent: 'center',
-        }}>
-        <Text>Reenviar código en</Text>
-        <Text status="primary" category="s1" onPress={() => onResendOtp()}>
-          {'  '}
-          55{'  '}
-        </Text>
-        <Text>segundos </Text>
-      </Layout>
+      {!sendOtp ? (
+        <Layout
+          style={{
+            alignItems: 'flex-end',
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}>
+          <Text>Reenviar código en</Text>
+          <Text status="primary" category="s1">
+            {'  '}
+            {seconds}
+            {'  '}
+          </Text>
+          <Text>segundos </Text>
+        </Layout>
+      ) : (
+        <Layout
+          style={{
+            alignItems: 'flex-end',
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}>
+          <Text
+            status="primary"
+            style={{textDecorationLine: 'underline', textAlign: 'center'}}
+            category="s1"
+            onPress={() => onSendOtp()}>
+            Reenviar Código
+          </Text>
+        </Layout>
+      )}
+
+      {/* Reenviar OTP */}
 
       {/* Space */}
       <Layout style={{height: 100}} />
@@ -63,15 +135,19 @@ export const VerifyOtp = ({onVerifyOtp, onResendOtp}: Props) => {
       <Layout>
         <Button
           style={{borderRadius: 50}}
-          // disabled={isPosting}
-          onPress={() => onVerifyOtp()}>
-          {evaProps => (
-            <Text
-              {...evaProps}
-              style={{fontSize: 20, color: 'white'}}
-              category="label">
-              Verificar
-            </Text>
+          disabled={isLoading || !isValidOtp}
+          onPress={() => onVerifyOtp(otp)}>
+          {isLoading ? (
+            <LoadingIndicator />
+          ) : (
+            evaProps => (
+              <Text
+                {...evaProps}
+                style={{fontSize: 20, color: 'white'}}
+                category="label">
+                Verificar
+              </Text>
+            )
           )}
         </Button>
       </Layout>

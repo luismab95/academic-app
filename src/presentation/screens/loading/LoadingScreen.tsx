@@ -12,7 +12,7 @@ export const LoadingScreen = ({navigation}: Props) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.navigate('LandingScreen');
-    }, 5000);
+    }, 10000);
     return () => clearTimeout(timer);
   }, []);
 

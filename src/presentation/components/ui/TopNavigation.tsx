@@ -19,14 +19,16 @@ const BackAction = (): React.ReactElement => {
 
 interface TopNavigationSimpleUsageShowcaseProps {
   title: string;
+  leftAction?: boolean;
 }
 
 export const TopNavigationApp = ({
   title,
+  leftAction = true,
 }: TopNavigationSimpleUsageShowcaseProps): React.ReactElement => (
   <TopNavigation
     style={{paddingTop: 40}}
-    accessoryLeft={BackAction}
+    accessoryLeft={leftAction ? BackAction : undefined}
     title={() => (
       <Text style={{fontSize: 24}}>
         {'  '}

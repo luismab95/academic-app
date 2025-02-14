@@ -1,10 +1,13 @@
 import {Layout, Text} from '@ui-kitten/components';
 import {useWindowDimensions} from 'react-native';
 import {appThemeNavigation} from '../../theme/theme';
+import {authStore} from '../../../shared/store/auth.store';
 
 export const UserAvatar = () => {
   const {height} = useWindowDimensions();
-
+  const {getPayloadToken} = authStore();
+  const user = getPayloadToken ? getPayloadToken() : {};
+  
   return (
     <Layout
       style={{
@@ -30,16 +33,19 @@ export const UserAvatar = () => {
             fontSize: 60,
             fontWeight: 'bold',
           }}>
-          LB
+          <>
+            {user.fullname?.charAt(0).toUpperCase()}
+            {user.fullname?.charAt(1).toUpperCase()}
+          </>{' '}
         </Text>
       </Layout>
 
       {/* INFO */}
       <Text category="s1" style={{marginTop: 12}}>
-        Luis Manuel Barragán González
+        {user.fullname}
       </Text>
       <Text category="s2" style={{marginTop: 8}}>
-        luismab95@gmail.com
+        {user.email}
       </Text>
     </Layout>
   );

@@ -1,27 +1,32 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {View} from 'react-native';
 import {Input} from '@ui-kitten/components';
 
 interface OptProps {
-  lenght: number;
+  length: number;
+  isValid: (arg: boolean) => void;
+  onComplete: (otp: string) => void;
 }
 
-export const Opt = ({lenght = 4}: OptProps) => {
-  const [otp, setOtp] = useState(['', '', '', '']);
+export const Opt = ({length = 4, onComplete, isValid}: OptProps) => {
+  const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
+  const inputs = useRef<(Input | null)[]>([]);
 
-  const handleChange = (value: string, index: number) => {
-    const updatedOtp = [...otp];
-    updatedOtp[index] = value;
-    setOtp(updatedOtp);
-  };
+  const handleChange = (text: string, index: number) => {
+    let newOtp = [...otp];
+    newOtp[index] = text;
+    setOtp(newOtp);
 
-  const handleSubmit = () => {
-    const otpString = otp.join('');
-    if (otpString.length === 4) {
-      console.log('OTP enviado:', otpString);
-    } else {
-      console.log('OTP inválido');
+    if (text && index < length - 1) {
+      inputs.current[index + 1]?.focus();
     }
+
+    if (newOtp.join('').length === length && onComplete) {
+      onComplete(newOtp.join(''));
+      isValid(true);
+      return;
+    }
+    isValid(false);
   };
 
   return (
@@ -34,11 +39,11 @@ export const Opt = ({lenght = 4}: OptProps) => {
       {otp.map((value, index) => (
         <Input
           key={index}
+          ref={el => (inputs.current[index] = el)}
           style={[{width: 80}, index < otp.length - 1 && {marginRight: 10}]}
           value={value}
           onChangeText={text => handleChange(text, index)}
           maxLength={1}
-          keyboardType="numeric"
           placeholder="-"
           size="large"
           textAlign="center"

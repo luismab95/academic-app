@@ -1,17 +1,17 @@
-import {useColorScheme} from 'react-native';
-import {DarkTheme, DefaultTheme} from '@react-navigation/native';
 import {createContext} from 'react';
+import {DarkTheme, DefaultTheme} from '@react-navigation/native';
+import {ThemeHook} from '../../shared/hooks/ThemeHook';
 
 export const appThemeNavigation = () => {
-  const colorScheme = useColorScheme();
-  const navigationTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+  const {theme} = ThemeHook();
+  const navigationTheme = theme === 'dark' ? DarkTheme : DefaultTheme;
   return {
-    dark: colorScheme === 'dark',
+    dark: theme === 'dark',
     colors: {...navigationTheme.colors},
   };
 };
 
 export const ThemeContext = createContext({
   theme: 'light',
-  toggleTheme: () => {},
+  toggleTheme: async () => {},
 });

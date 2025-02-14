@@ -9,8 +9,9 @@ import {appThemeNavigation, ThemeContext} from './presentation/theme/theme';
 import {StackNavigator} from './presentation/navigation/StackNavigator';
 import {ThemeHook} from './shared/hooks/ThemeHook';
 import * as eva from '@eva-design/eva';
+import {AuthProvider} from './presentation/providers/auth.provider';
 
-ModalService.setShouldUseTopInsets = true; 
+ModalService.setShouldUseTopInsets = true;
 
 function App(): React.JSX.Element {
   const {theme, toggleTheme} = ThemeHook();
@@ -20,8 +21,9 @@ function App(): React.JSX.Element {
       <ThemeContext.Provider value={{theme, toggleTheme}}>
         <ApplicationProvider {...eva} theme={eva[theme]}>
           <NavigationContainer theme={{...(appThemeNavigation() as any)}}>
-            {/* //TODO AGREGAR AUTH PROVIDER */}
-            <StackNavigator />
+            <AuthProvider>
+              <StackNavigator />
+            </AuthProvider>
           </NavigationContainer>
         </ApplicationProvider>
       </ThemeContext.Provider>

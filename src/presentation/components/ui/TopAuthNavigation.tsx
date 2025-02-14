@@ -10,6 +10,7 @@ import {
 } from '@ui-kitten/components';
 import {TouchableWebElement} from '@ui-kitten/components/devsupport';
 import {appThemeNavigation} from '../../theme/theme';
+import {authStore} from '../../../shared/store/auth.store';
 
 interface Props {
   onPressProfile: () => void;
@@ -18,6 +19,9 @@ interface Props {
 export const TopAuthNavigation = ({
   onPressProfile,
 }: Props): React.ReactElement => {
+  const {getPayloadToken} = authStore();
+  const user = getPayloadToken ? getPayloadToken() : {};
+
   const renderAvatar = (): React.ReactElement => (
     <View
       style={{
@@ -40,7 +44,10 @@ export const TopAuthNavigation = ({
           fontSize: 14,
           fontWeight: 'bold',
         }}>
-        LB
+        <>
+          {user.fullname?.charAt(0).toUpperCase()}
+          {user.fullname?.charAt(1).toUpperCase()}
+        </>
       </Text>
     </View>
   );
@@ -60,7 +67,7 @@ export const TopAuthNavigation = ({
   const renderTitle = (): TouchableWebElement => (
     <Layout style={{flexDirection: 'column', marginLeft: 10}}>
       <Text category="s2">Bienvendo</Text>
-      <Text category="h6">Luis Manuel Barragán González</Text>
+      <Text category="h6">{user.fullname}</Text>
     </Layout>
   );
 

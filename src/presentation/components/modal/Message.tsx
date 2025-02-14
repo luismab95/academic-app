@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import {Image, useWindowDimensions} from 'react-native';
 
-interface Props {
+export interface PropsMessageModal {
   title: string;
   content: string;
   type: 'success' | 'danger' | 'warning' | 'info';
@@ -23,7 +23,7 @@ export const Message = ({
   type,
   onContinue,
   onCancel,
-}: Props) => {
+}: PropsMessageModal) => {
   const {width} = useWindowDimensions();
   const appTheme = useTheme();
   const successImage = require(`../../../assets/images/success.png`);
@@ -48,7 +48,7 @@ export const Message = ({
         break;
     }
     return color;
-  };
+  };  
 
   return (
     <Card

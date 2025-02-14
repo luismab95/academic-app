@@ -9,14 +9,16 @@ import {
   TopNavigationApp,
   UserAvatar,
   SignOut,
-  Message,
 } from '../../components';
+import {servicesContainer} from '../../providers/service.provider';
+import {authStore} from '../../../shared/store/auth.store';
 
 interface Props extends StackScreenProps<RootStackParams, 'ProfileScreen'> {}
 
 export const ProfileScreen = ({navigation}: Props) => {
   const [visible, setVisible] = useState(false);
   const themeContext = useContext(ThemeContext);
+  const {logout} = authStore();
   const appTheme = useTheme();
   const listItems: ListElementsProps[] = [
     {
@@ -29,8 +31,8 @@ export const ProfileScreen = ({navigation}: Props) => {
     {
       title: themeContext.theme !== 'dark' ? 'Modo Oscuro' : 'Modo Claro',
       icon: themeContext.theme !== 'dark' ? 'moon-outline' : 'sun-outline',
-      onPress: () => {
-        themeContext.toggleTheme();
+      onPress: async () => {
+       await themeContext.toggleTheme();
       },
     },
     {
@@ -64,7 +66,9 @@ export const ProfileScreen = ({navigation}: Props) => {
     setVisible(false);
   };
 
-  const onLogout = () => {
+  const onLogout = async () => {
+    await servicesContainer.auth.signOut();
+    await logout!();
     navigation.navigate('SignInScreen');
   };
 

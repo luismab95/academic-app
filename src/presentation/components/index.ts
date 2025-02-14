@@ -7,5 +7,7 @@ export * from './ui/UserAvatar';
 export * from './ui/VerifyOtp';
 export * from './ui/ResetPasswordForm';
 export * from './ui/ForgotPasswordForm';
+export * from './ui/LoadingIndicator';
+export * from './ui/ErrorFieldForm';
 export * from './modal/SignOut';
 export * from './modal/Message';

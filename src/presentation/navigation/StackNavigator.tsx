@@ -21,7 +21,7 @@ import {
 export type RootStackParams = {
   LoadingScreen: undefined;
   SignInScreen: undefined;
-  SignInMfaScreen: undefined;
+  SignInMfaScreen: {message: string; email: string};
   SignUpScreen: undefined;
   ForgotPasswordScreen: undefined;
   VerifyResetPasswordScreen: undefined;
