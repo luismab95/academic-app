@@ -17,6 +17,7 @@ import {
   SignUpScreen,
   VerifyResetPasswordScreen,
 } from '../screens';
+import {otpMethod} from '../../domian';
 
 export type RootStackParams = {
   LoadingScreen: undefined;
@@ -24,8 +25,12 @@ export type RootStackParams = {
   SignInMfaScreen: {message: string; email: string};
   SignUpScreen: undefined;
   ForgotPasswordScreen: undefined;
-  VerifyResetPasswordScreen: undefined;
-  ResetPasswordScreen: undefined;
+  VerifyResetPasswordScreen: {
+    message: string;
+    contact: string;
+    method: otpMethod;
+  };
+  ResetPasswordScreen: {method: otpMethod; otp: string; userId: number};
   LandingScreen: undefined;
   HomeScreen: undefined;
   ProfileScreen: undefined;

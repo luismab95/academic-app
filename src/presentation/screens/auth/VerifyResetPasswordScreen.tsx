@@ -1,33 +1,110 @@
+import {useState} from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
-import {Layout} from '@ui-kitten/components';
+import {Layout, Modal} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
-import {TopNavigationApp} from '../../components/ui/TopNavigation';
-import {VerifyOtp} from '../../components';
+import {
+  Message,
+  PropsMessageModal,
+  VerifyOtp,
+  TopNavigationApp,
+} from '../../components';
+import {errorStore} from '../../../shared';
+import {servicesContainer} from '../../providers/service.provider';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'VerifyResetPasswordScreen'> {}
 
-export const VerifyResetPasswordScreen = ({navigation}: Props) => {
-  const onVerifyOtp = async (otp: string) => {};
+export const VerifyResetPasswordScreen = ({navigation, route}: Props) => {
+  const {message, contact, method} = route.params;
 
-  const onResendOtp = () => {
-    //TODO RESEND OPT
-    console.log('Resend OPT');
+  const [isLoading, setIsLoading] = useState(false);
+  const [visibleModal, setVisibleModal] = useState(false);
+  const [modalInfo, setModalInfo] = useState({
+    title: 'Aviso',
+    content: '',
+    type: 'success',
+  } as PropsMessageModal);
+
+  const onCloseModal = () => {
+    setVisibleModal(false);
   };
+
+  const onVerifyOtp = async (otp: string) => {
+    setIsLoading(true);
+    const response = await servicesContainer.auth.verifyForgotPassword(
+      contact,
+      method,
+      otp,
+      'forgot-password',
+    );
+    if (response === null) {
+      setModalInfo({
+        title: 'Error',
+        content: errorStore.getState().message,
+        type: 'danger',
+      } as PropsMessageModal);
+      setVisibleModal(true);
+      setIsLoading(false);
+      return;
+    }
+    navigation.navigate('ResetPasswordScreen', {
+      method,
+      otp,
+      userId: response.data.userId,
+    });
+  };
+
+  const onResendOtp = async () => {
+    
+    setIsLoading(true);
+    const response = await servicesContainer.auth.forgotPassword(
+      contact,
+      method,
+      'forgot-password'
+    );
+
+    if (response === null) {
+      setModalInfo({
+        title: 'Error',
+        content: errorStore.getState().message,
+        type: 'danger',
+      } as PropsMessageModal);
+      setVisibleModal(true);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(false);
+  };
+
   return (
     <>
       <TopNavigationApp title="Olvidaste tu Contraseña" />
       <Layout style={{flex: 1}}>
         <ScrollView style={{marginHorizontal: 40}}>
           <VerifyOtp
-            isLoading={false}
-            message={'Ingresa el código que te enviamos a tu correo'}
+            isLoading={isLoading}
+            message={message}
             onVerifyOtp={onVerifyOtp}
             onResendOtp={onResendOtp}
           />
         </ScrollView>
       </Layout>
+
+      {/* MODAL */}
+      <Modal
+        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
+        onBackdropPress={onCloseModal}
+        visible={visibleModal}
+        children={
+          <Message
+            title={modalInfo.title}
+            content={modalInfo.content}
+            type={modalInfo.type}
+            onContinue={onCloseModal}
+          />
+        }></Modal>
     </>
   );
 };

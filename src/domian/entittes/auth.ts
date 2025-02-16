@@ -6,3 +6,6 @@ export interface AuthSession {
   logout?: () => void;
   getPayloadToken?: () => void;
 }
+
+export type otpType = 'login' | 'forgot-password' | 'reset-password';
+export type otpMethod = 'email' | 'sms';

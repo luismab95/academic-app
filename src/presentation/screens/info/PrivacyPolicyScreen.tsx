@@ -1,6 +1,6 @@
-import {Layout, Text} from '@ui-kitten/components';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
+import {Layout, Text} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {TopNavigationApp} from '../../components/ui/TopNavigation';
 

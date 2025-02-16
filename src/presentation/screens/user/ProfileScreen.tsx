@@ -11,7 +11,7 @@ import {
   SignOut,
 } from '../../components';
 import {servicesContainer} from '../../providers/service.provider';
-import {authStore} from '../../../shared/store/auth.store';
+import {authStore} from '../../../shared';
 
 interface Props extends StackScreenProps<RootStackParams, 'ProfileScreen'> {}
 
@@ -32,7 +32,7 @@ export const ProfileScreen = ({navigation}: Props) => {
       title: themeContext.theme !== 'dark' ? 'Modo Oscuro' : 'Modo Claro',
       icon: themeContext.theme !== 'dark' ? 'moon-outline' : 'sun-outline',
       onPress: async () => {
-       await themeContext.toggleTheme();
+        await themeContext.toggleTheme();
       },
     },
     {
@@ -69,7 +69,7 @@ export const ProfileScreen = ({navigation}: Props) => {
   const onLogout = async () => {
     await servicesContainer.auth.signOut();
     await logout!();
-    navigation.navigate('SignInScreen');
+    navigation.navigate('LoadingScreen');
   };
 
   return (

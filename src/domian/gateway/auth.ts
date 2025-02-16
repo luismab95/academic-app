@@ -1,6 +1,5 @@
-import {GeneralResponse} from '../../shared/interface/general.interface';
-import {AuthSession} from '../entittes/auth';
-import {User} from '../entittes/user';
+import {GeneralResponse} from '../../shared';
+import {AuthSession, otpMethod, otpType, User} from '../';
 
 export interface AuthGateway {
   signIn(
@@ -9,10 +8,21 @@ export interface AuthGateway {
   ): Promise<GeneralResponse<string> | null>;
   signInMfa(
     email: string,
-    method: 'email' | 'sms',
+    method: otpMethod,
     otp: string,
     device: string,
   ): Promise<GeneralResponse<AuthSession> | null>;
   signUp(user: User): Promise<GeneralResponse<string> | null>;
-  signOut(): Promise<void>;
+  signOut(sessionId: number): Promise<void>;
+  forgotPassword(
+    contact: string,
+    method: otpMethod,
+    type: otpType,
+  ): Promise<GeneralResponse<string> | null>;
+  verifyForgotPassword(
+    contact: string,
+    method: otpMethod,
+    otp: string,
+    type: otpType,
+  ): Promise<GeneralResponse<{userId: number; message: string}> | null>;
 }

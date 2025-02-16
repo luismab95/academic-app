@@ -19,11 +19,12 @@ export const AuthProvider = ({children}: PropsWithChildren) => {
         await login!(authSession);
       }
       const status = checkStatus!();
+
       setIsAuth(status);
     };
 
     fetchSession();
-  }, []);
+  }, [checkStatus!()]);
 
   useEffect(() => {
     if (isAuth) {
@@ -34,7 +35,7 @@ export const AuthProvider = ({children}: PropsWithChildren) => {
     } else {
       navigation.reset({
         index: 0,
-        routes: [{name: 'LandingScreen'}],
+        routes: [{name: 'LoadingScreen'}],
       });
     }
   }, [isAuth]);

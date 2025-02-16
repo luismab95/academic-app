@@ -1,9 +1,8 @@
 import {useCallback, useState} from 'react';
-import {Image, useWindowDimensions} from 'react-native';
+import {Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
-import {Formik} from 'formik';
 import {Button, Input, Layout, Modal, Text} from '@ui-kitten/components';
 import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
 import {RootStackParams} from '../../navigation/StackNavigator';
@@ -16,15 +15,8 @@ import {
   TopNavigationApp,
 } from '../../components';
 import {servicesContainer} from '../../providers/service.provider';
-import {errorStore} from '../../../shared/store/error.store';
-import * as Yup from 'yup';
-
-const SignInSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Correo Electrónico no válido.')
-    .required('Correo Electrónico es obligatorio.'),
-  password: Yup.string().required('Contraseña es obligatorio.'),
-});
+import {SignInSchema, errorStore} from '../../../shared';
+import {Formik} from 'formik';
 
 interface SignIn {
   email: string;
@@ -34,8 +26,6 @@ interface SignIn {
 interface Props extends StackScreenProps<RootStackParams, 'SignInScreen'> {}
 
 export const SignInScreen = ({navigation}: Props) => {
-  const {height} = useWindowDimensions();
-
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);

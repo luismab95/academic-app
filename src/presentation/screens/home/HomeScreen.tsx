@@ -1,9 +1,9 @@
+import {Image} from 'react-native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Layout, Text} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {TopAuthNavigation} from '../../components';
-import {Image, useWindowDimensions} from 'react-native';
 
 interface Props extends StackScreenProps<RootStackParams, 'HomeScreen'> {}
 
@@ -11,8 +11,6 @@ export const HomeScreen = ({navigation}: Props) => {
   const onPressProfile = () => {
     navigation.navigate('ProfileScreen');
   };
-
-  const {height} = useWindowDimensions();
 
   return (
     <>
@@ -27,9 +25,7 @@ export const HomeScreen = ({navigation}: Props) => {
               marginTop: 80,
               paddingHorizontal: 40,
             }}>
-            <Image
-              source={require('../../../assets/images/not-found.png')}
-            />
+            <Image source={require('../../../assets/images/not-found.png')} />
           </Layout>
 
           <Layout style={{marginTop: 10}}>

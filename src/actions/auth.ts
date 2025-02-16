@@ -1,6 +1,5 @@
-import {User} from '../domian/entittes/user';
-import {AuthGateway} from '../domian/gateway/auth';
-import {authStore} from '../shared/store/auth.store';
+import {User, AuthGateway, otpType, otpMethod} from '../domian';
+import {authStore} from '../shared';
 
 export class AuthActions {
   constructor(private readonly authGateway: AuthGateway) {}
@@ -11,7 +10,7 @@ export class AuthActions {
 
   async signInMfa(
     email: string,
-    method: 'email' | 'sms',
+    method: otpMethod,
     otp: string,
     device: string,
   ) {
@@ -33,10 +32,30 @@ export class AuthActions {
   }
 
   async signOut() {
-    await this.authGateway.signOut();
+    const {sessionId} = authStore.getState();
+
+    await this.authGateway.signOut(sessionId);
   }
 
   async signUp(user: User) {
     return await this.authGateway.signUp(user);
+  }
+
+  async forgotPassword(contact: string, method: otpMethod, type: otpType) {
+    return await this.authGateway.forgotPassword(contact, method, type);
+  }
+
+  async verifyForgotPassword(
+    contact: string,
+    method: otpMethod,
+    otp: string,
+    type: otpType,
+  ) {
+    return await this.authGateway.verifyForgotPassword(
+      contact,
+      method,
+      otp,
+      type,
+    );
   }
 }

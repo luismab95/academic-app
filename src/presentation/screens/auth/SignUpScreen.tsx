@@ -1,6 +1,7 @@
 import {useCallback, useState} from 'react';
-import {Image, useWindowDimensions} from 'react-native';
+import {Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
+import {useFocusEffect} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {Button, Input, Layout, Modal, Text} from '@ui-kitten/components';
 import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
@@ -13,29 +14,10 @@ import {
   PropsMessageModal,
   TopNavigationApp,
 } from '../../components';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
-import {useFocusEffect} from '@react-navigation/native';
-import {User} from '../../../domian/entittes/user';
+import {User} from '../../../domian';
 import {servicesContainer} from '../../providers/service.provider';
-import {errorStore} from '../../../shared/store/error.store';
-
-const SignUpSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Correo Electrónico no válido.')
-    .required('Correo Electrónico es obligatorio.'),
-  password: Yup.string()
-    .required('Contraseña es obligatorio.')
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.',
-    ),
-  name: Yup.string().required('Nombre es obligatorio.'),
-  lastname: Yup.string().required('Apellido es obligatorio.'),
-  identification: Yup.string()
-    .required('Identificación es obligatorio.')
-    .matches(/^\d{10}$/, 'Identificación no válida.'),
-});
+import {errorStore, SignUpSchema} from '../../../shared';
+import {Formik} from 'formik';
 
 interface Props extends StackScreenProps<RootStackParams, 'SignUpScreen'> {}
 
@@ -48,8 +30,6 @@ export const SignUpScreen = ({navigation}: Props) => {
     content: '',
     type: 'success',
   } as PropsMessageModal);
-
-  const {height} = useWindowDimensions();
 
   const toggleSecureEntry = (): void => {
     setSecureTextEntry(!secureTextEntry);

@@ -1,11 +1,7 @@
 import {NetworkInfo} from 'react-native-network-info';
-import {GeneralResponse} from '../../shared/interface/general.interface';
-import {errorStore} from '../../shared/store/error.store';
-import {authStore} from '../../shared/store/auth.store';
-import {AuthGateway} from '../../domian/gateway/auth';
-import {AuthSession} from '../../domian/entittes/auth';
+import {errorStore, GeneralResponse} from '../../shared/';
+import {User, AuthSession, AuthGateway, otpMethod, otpType} from '../../domian';
 import {axiosApi} from '../adapters/axiosApi';
-import {User} from '../../domian/entittes/user';
 
 export class AuthService implements AuthGateway {
   async signIn(
@@ -32,7 +28,7 @@ export class AuthService implements AuthGateway {
 
   async signInMfa(
     email: string,
-    method: 'email' | 'sms',
+    method: otpMethod,
     otp: string,
     device: string,
   ): Promise<GeneralResponse<AuthSession> | null> {
@@ -73,15 +69,61 @@ export class AuthService implements AuthGateway {
     }
   }
 
-  async signOut(): Promise<void> {
+  async signOut(sessionId: number): Promise<void> {
     try {
-      const {sessionId} = authStore.getState();
       await axiosApi.delete<GeneralResponse<string>>(
         `/auth/sign-out/${sessionId}`,
       );
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || error.message;
       errorStore.setState({message: errorMessage});
+    }
+  }
+
+  async forgotPassword(
+    contact: string,
+    method: otpMethod,
+    type: otpType,
+  ): Promise<GeneralResponse<string> | null> {
+    contact = contact.toLowerCase();    
+    try {
+      const {data} = await axiosApi.post<GeneralResponse<string>>(
+        '/auth/forgot-password',
+        {
+          contact,
+          method,
+          type,
+        },
+      );
+      return data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      errorStore.setState({message: errorMessage});
+      return null;
+    }
+  }
+
+  async verifyForgotPassword(
+    contact: string,
+    method: otpMethod,
+    otp: string,
+    type: otpType,
+  ): Promise<GeneralResponse<{userId: number; message: string}> | null> {
+    contact = contact.toLowerCase();
+    try {
+      const {data} = await axiosApi.post<
+        GeneralResponse<{userId: number; message: string}>
+      >('/auth/valid-forgot-password', {
+        contact,
+        method,
+        otp,
+        type,
+      });
+      return data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      errorStore.setState({message: errorMessage});
+      return null;
     }
   }
 }

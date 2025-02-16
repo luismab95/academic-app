@@ -26,7 +26,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       sessionId: session.sessionId,
     });
   },
-  logout: async () => {
+  logout: async () => {    
     await StorageAdapter.removeItem('session');
     set({accessToken: '', refreshToken: '', sessionId: 0});
   },

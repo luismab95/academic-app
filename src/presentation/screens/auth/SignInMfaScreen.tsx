@@ -1,22 +1,25 @@
 import {useState} from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
+import DeviceInfo from 'react-native-device-info';
 import {StackScreenProps} from '@react-navigation/stack';
 import {Layout, Modal} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
-import {TopNavigationApp} from '../../components/ui/TopNavigation';
-import {Message, PropsMessageModal, VerifyOtp} from '../../components';
-import {errorStore} from '../../../shared/store/error.store';
+import {
+  Message,
+  PropsMessageModal,
+  TopNavigationApp,
+  VerifyOtp,
+} from '../../components';
 import {servicesContainer} from '../../providers/service.provider';
-import {authStore} from '../../../shared/store/auth.store';
-import DeviceInfo from 'react-native-device-info';
+import {errorStore, authStore} from '../../../shared';
 
 interface Props extends StackScreenProps<RootStackParams, 'SignInMfaScreen'> {}
 
 export const SignInMfaScreen = ({navigation, route}: Props) => {
   const {message, email} = route.params;
+  const [isLoading, setIsLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const {login} = authStore();
-  const [isLoading, setIsLoading] = useState(false);
   const [modalInfo, setModalInfo] = useState({
     title: 'Aviso',
     content: '',
@@ -49,9 +52,26 @@ export const SignInMfaScreen = ({navigation, route}: Props) => {
     navigation.navigate('HomeScreen');
   };
 
-  const onResendOtp = () => {
-    //TODO RESEND OPT
-    console.log('Resend OPT');
+  const onResendOtp = async () => {
+    setIsLoading(true);
+    const response = await servicesContainer.auth.forgotPassword(
+      email,
+      'email',
+      'login',
+    );
+
+    if (response === null) {
+      setModalInfo({
+        title: 'Error',
+        content: errorStore.getState().message,
+        type: 'danger',
+      } as PropsMessageModal);
+      setVisibleModal(true);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(false);
   };
 
   const onCloseModal = () => {
@@ -71,6 +91,8 @@ export const SignInMfaScreen = ({navigation, route}: Props) => {
           />
         </ScrollView>
       </Layout>
+
+      {/* MODAL */}
       <Modal
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}

@@ -25,6 +25,6 @@ export const ThemeHook = () => {
     toggleTheme,
   } as {
     theme: 'light' | 'dark';
-    toggleTheme: () => void;
+    toggleTheme: () => Promise<void>;
   };
 };
