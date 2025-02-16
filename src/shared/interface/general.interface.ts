@@ -8,3 +8,9 @@ export interface ErrorResponse {
   setError: (message: string) => void;
   clearError: () => void;
 }
+
+export interface EncryptedData {
+  encryptedAESKey: string;
+  encryptedMessage: string;
+  iv: string;
+}

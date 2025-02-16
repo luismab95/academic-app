@@ -85,7 +85,7 @@ export class AuthService implements AuthGateway {
     method: otpMethod,
     type: otpType,
   ): Promise<GeneralResponse<string> | null> {
-    contact = contact.toLowerCase();    
+    contact = contact.toLowerCase();
     try {
       const {data} = await axiosApi.post<GeneralResponse<string>>(
         '/auth/forgot-password',
@@ -119,6 +119,19 @@ export class AuthService implements AuthGateway {
         otp,
         type,
       });
+      return data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      errorStore.setState({message: errorMessage});
+      return null;
+    }
+  }
+
+  async getPublicKey(): Promise<GeneralResponse<string> | null> {
+    try {
+      const {data} = await axiosApi.get<GeneralResponse<string>>(
+        '/auth/public-key',
+      );
       return data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || error.message;

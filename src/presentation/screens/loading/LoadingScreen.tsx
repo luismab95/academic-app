@@ -23,7 +23,7 @@ export const LoadingScreen = ({navigation}: Props) => {
   const onCloseModal = () => {
     setVisibleModal(false);
   };
-  
+
   useEffect(() => {
     const getDevice = async () => {
       setIsLoading(true);
@@ -39,7 +39,7 @@ export const LoadingScreen = ({navigation}: Props) => {
         setVisibleModal(true);
         setIsLoading(false);
         return;
-      }      
+      }
 
       if (typeof response.data === 'string') {
         navigation.navigate('LandingScreen');
@@ -72,6 +72,8 @@ export const LoadingScreen = ({navigation}: Props) => {
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}

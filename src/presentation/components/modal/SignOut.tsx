@@ -22,9 +22,15 @@ export const SignOut = ({onCancel, onLogout}: Props) => {
     <Card
       disabled={true}
       style={{
-        width: width - 40,
-        borderRadius: 20,
+        width: width,
+        height: 300,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
         backgroundColor: appTheme['background-basic-color-1'],
+        position: 'absolute',
+        bottom: 0,
       }}>
       <Text
         style={{

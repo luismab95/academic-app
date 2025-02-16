@@ -58,4 +58,8 @@ export class AuthActions {
       type,
     );
   }
+
+  async getPublicKey() {
+    return await this.authGateway.getPublicKey();
+  }
 }

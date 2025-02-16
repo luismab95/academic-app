@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {Dimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import DeviceInfo from 'react-native-device-info';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -16,6 +17,8 @@ import {errorStore, authStore} from '../../../shared';
 interface Props extends StackScreenProps<RootStackParams, 'SignInMfaScreen'> {}
 
 export const SignInMfaScreen = ({navigation, route}: Props) => {
+  const screenWidth = Dimensions.get('window').width;
+
   const {message, email} = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
@@ -82,7 +85,13 @@ export const SignInMfaScreen = ({navigation, route}: Props) => {
     <>
       <TopNavigationApp title="Verificación MFA" />
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: screenWidth > 400 ? 40 : 20,
+          }}
+          keyboardShouldPersistTaps="handled">
           <VerifyOtp
             isLoading={isLoading}
             message={message}
@@ -91,12 +100,13 @@ export const SignInMfaScreen = ({navigation, route}: Props) => {
           />
         </ScrollView>
       </Layout>
-
       {/* MODAL */}
       <Modal
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}
@@ -104,7 +114,8 @@ export const SignInMfaScreen = ({navigation, route}: Props) => {
             type={modalInfo.type}
             onContinue={onCloseModal}
           />
-        }></Modal>
+        }
+      />
     </>
   );
 };

@@ -25,4 +25,8 @@ export interface AuthGateway {
     otp: string,
     type: otpType,
   ): Promise<GeneralResponse<{userId: number; message: string}> | null>;
+  getPublicKey(): Promise<GeneralResponse<{
+    publicKey: string;
+    sha256Hash: string;
+  }> | null>;
 }

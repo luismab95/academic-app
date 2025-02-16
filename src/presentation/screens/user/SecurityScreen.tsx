@@ -14,10 +14,13 @@ import {
 import {servicesContainer} from '../../providers/service.provider';
 import {authStore, errorStore} from '../../../shared';
 import {otpMethod} from '../../../domian';
+import {Dimensions} from 'react-native';
 
 interface Props extends StackScreenProps<RootStackParams, 'SecurityScreen'> {}
 
 export const SecurityScreen = ({navigation}: Props) => {
+  const screenWidth = Dimensions.get('window').width;
+
   const [verifyOtp, setVerifyOtp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [otpInfo, setOtpInfo] = useState<{
@@ -152,38 +155,44 @@ export const SecurityScreen = ({navigation}: Props) => {
   };
 
   return (
-    <>
+    <Layout style={{flex: 1}}>
       <TopNavigationApp title="Seguridad" />
-      <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
-          {forgotPassword ? (
-            verifyOtp ? (
-              <ResetPasswordForm
-                isLoading={isLoading}
-                onResetPassword={onResetPassword}
-              />
-            ) : (
-              <VerifyOtp
-                message={message}
-                isLoading={isLoading}
-                onVerifyOtp={onVerifyOtp}
-                onResendOtp={onResendOtp}
-              />
-            )
-          ) : (
-            <ForgotPasswordForm
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          paddingHorizontal: screenWidth > 400 ? 40 : 20,
+        }}
+        keyboardShouldPersistTaps="handled">
+        {forgotPassword ? (
+          verifyOtp ? (
+            <ResetPasswordForm
               isLoading={isLoading}
-              onForgotPassword={onForgotPassword}
+              onResetPassword={onResetPassword}
             />
-          )}
-        </ScrollView>
-      </Layout>
+          ) : (
+            <VerifyOtp
+              message={message}
+              isLoading={isLoading}
+              onVerifyOtp={onVerifyOtp}
+              onResendOtp={onResendOtp}
+            />
+          )
+        ) : (
+          <ForgotPasswordForm
+            isLoading={isLoading}
+            onForgotPassword={onForgotPassword}
+          />
+        )}
+      </ScrollView>
 
       {/* MODAL */}
       <Modal
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}
@@ -192,6 +201,6 @@ export const SecurityScreen = ({navigation}: Props) => {
             onContinue={onCloseModal}
           />
         }></Modal>
-    </>
+    </Layout>
   );
 };

@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {Image} from 'react-native';
+import {Dimensions, Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
@@ -26,6 +26,8 @@ interface SignIn {
 interface Props extends StackScreenProps<RootStackParams, 'SignInScreen'> {}
 
 export const SignInScreen = ({navigation}: Props) => {
+  const screenHeight = Dimensions.get('window').height;
+
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
@@ -72,30 +74,31 @@ export const SignInScreen = ({navigation}: Props) => {
     <>
       <TopNavigationApp title="" leftAction={false} />
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1, paddingHorizontal: 40}}>
+          {/* Imagen */}
           <Layout
             style={{
-              flexDirection: 'row',
+              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
               paddingHorizontal: 40,
             }}>
             <Image
-              style={{height: 400, width: 400}}
+              style={{width: '100%', height: 300, resizeMode: 'contain'}}
               source={require('../../../assets/images/login.png')}
+              resizeMode="contain"
             />
           </Layout>
 
-          <Layout style={{paddingTop: 0}}>
+          {/* Título */}
+          <Layout style={{marginTop: screenHeight * 0.01}}>
             <Text category="h1">Inicie Sesión en su Cuenta</Text>
           </Layout>
 
-          {/* Space */}
-          <Layout style={{height: 20}} />
-
           {/* Inputs */}
           <Formik
-            initialValues={{email: '', password: ''} as SignIn}
+            initialValues={{email: '', password: ''}}
             validationSchema={SignInSchema}
             validateOnMount
             onSubmit={values => onLogin(values)}>
@@ -115,9 +118,10 @@ export const SignInScreen = ({navigation}: Props) => {
                   resetForm();
                 }, []),
               );
+
               return (
                 <>
-                  <Layout style={{marginTop: 20}}>
+                  <Layout style={{marginTop: screenHeight * 0.02}}>
                     <Input
                       placeholder="Correo electrónico"
                       keyboardType="email-address"
@@ -133,10 +137,9 @@ export const SignInScreen = ({navigation}: Props) => {
                       accessoryLeft={
                         <MyIcon name="email-outline" width={20} height={20} />
                       }
+                      disabled={isLoading}
                       style={{marginBottom: 10}}
                     />
-
-                    <Layout style={{height: 10}} />
 
                     <Input
                       placeholder="Contraseña"
@@ -153,6 +156,7 @@ export const SignInScreen = ({navigation}: Props) => {
                       accessoryLeft={
                         <MyIcon name="lock-outline" width={20} height={20} />
                       }
+                      disabled={isLoading}
                       accessoryRight={
                         <TouchableWithoutFeedback onPress={toggleSecureEntry}>
                           <MyIcon
@@ -166,14 +170,16 @@ export const SignInScreen = ({navigation}: Props) => {
                     />
                   </Layout>
 
-                  <Layout style={{marginTop: 30}}></Layout>
-                  <Layout>
+                  {/* Botón de Iniciar Sesión */}
+                  <Layout
+                    style={{
+                      marginTop: screenHeight * 0.05,
+                      alignItems: 'center',
+                    }}>
                     <Button
-                      style={{borderRadius: 50}}
+                      style={{borderRadius: 50, width: '100%'}}
                       disabled={isLoading || !isValid}
-                      onPress={() => {
-                        handleSubmit();
-                      }}>
+                      onPress={() => handleSubmit()}>
                       {isLoading ? (
                         <LoadingIndicator />
                       ) : (
@@ -193,14 +199,9 @@ export const SignInScreen = ({navigation}: Props) => {
             }}
           </Formik>
 
-          {/* Información para recuperar contraseña */}
-          <Layout style={{height: 30}} />
+          {/* Enlace para recuperar contraseña */}
           <Layout
-            style={{
-              alignItems: 'flex-end',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}>
+            style={{marginTop: screenHeight * 0.02, alignItems: 'center'}}>
             <Text
               status="primary"
               category="s1"
@@ -209,11 +210,10 @@ export const SignInScreen = ({navigation}: Props) => {
             </Text>
           </Layout>
 
-          {/* Información para crear cuenta */}
-          <Layout style={{height: 30}} />
+          {/* Enlace para crear cuenta */}
           <Layout
             style={{
-              alignItems: 'flex-end',
+              marginVertical: screenHeight * 0.02,
               flexDirection: 'row',
               justifyContent: 'center',
             }}>
@@ -222,13 +222,9 @@ export const SignInScreen = ({navigation}: Props) => {
               status="primary"
               category="s1"
               onPress={() => navigation.navigate('SignUpScreen')}>
-              {'  '}
-              Regístrate{'  '}
+              {'  '} Regístrate {'  '}
             </Text>
           </Layout>
-
-          {/* Space */}
-          <Layout style={{height: 40}} />
         </ScrollView>
       </Layout>
 
@@ -237,6 +233,8 @@ export const SignInScreen = ({navigation}: Props) => {
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}
@@ -244,7 +242,8 @@ export const SignInScreen = ({navigation}: Props) => {
             type={modalInfo.type}
             onContinue={onCloseModal}
           />
-        }></Modal>
+        }
+      />
     </>
   );
 };

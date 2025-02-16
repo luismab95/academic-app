@@ -7,7 +7,7 @@ export const UserAvatar = () => {
   const {height} = useWindowDimensions();
   const {getPayloadToken} = authStore();
   const user = getPayloadToken ? getPayloadToken() : {};
-  
+
   return (
     <Layout
       style={{
@@ -28,15 +28,16 @@ export const UserAvatar = () => {
         }}>
         <Text
           style={{
-            marginHorizontal: 10,
+            paddingHorizontal: 10,
             color: 'white',
             fontSize: 60,
             fontWeight: 'bold',
+            textAlign: 'center',
           }}>
           <>
             {user.fullname?.charAt(0).toUpperCase()}
             {user.fullname?.charAt(1).toUpperCase()}
-          </>{' '}
+          </>
         </Text>
       </Layout>
 

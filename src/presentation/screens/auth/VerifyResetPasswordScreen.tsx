@@ -11,11 +11,14 @@ import {
 } from '../../components';
 import {errorStore} from '../../../shared';
 import {servicesContainer} from '../../providers/service.provider';
+import { Dimensions } from 'react-native';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'VerifyResetPasswordScreen'> {}
 
 export const VerifyResetPasswordScreen = ({navigation, route}: Props) => {
+  const screenWidth = Dimensions.get('window').width;
+
   const {message, contact, method} = route.params;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -56,12 +59,11 @@ export const VerifyResetPasswordScreen = ({navigation, route}: Props) => {
   };
 
   const onResendOtp = async () => {
-    
     setIsLoading(true);
     const response = await servicesContainer.auth.forgotPassword(
       contact,
       method,
-      'forgot-password'
+      'forgot-password',
     );
 
     if (response === null) {
@@ -82,7 +84,13 @@ export const VerifyResetPasswordScreen = ({navigation, route}: Props) => {
     <>
       <TopNavigationApp title="Olvidaste tu Contraseña" />
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: screenWidth > 400 ? 40 : 20,
+          }}
+          keyboardShouldPersistTaps="handled">
           <VerifyOtp
             isLoading={isLoading}
             message={message}
@@ -97,6 +105,8 @@ export const VerifyResetPasswordScreen = ({navigation, route}: Props) => {
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}

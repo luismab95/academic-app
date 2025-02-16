@@ -13,11 +13,14 @@ import {
 import {servicesContainer} from '../../providers/service.provider';
 import {errorStore} from '../../../shared';
 import {otpMethod} from '../../../domian';
+import {Dimensions} from 'react-native';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'ForgotPasswordScreen'> {}
 
 export const ForgotPasswordScreen = ({navigation}: Props) => {
+  const screenWidth = Dimensions.get('window').width;
+
   const [isLoading, setIsLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [modalInfo, setModalInfo] = useState({
@@ -68,7 +71,13 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
     <>
       <TopNavigationApp title="Olvidaste tu Contraseña" />
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: screenWidth > 400 ? 40 : 20,
+          }}
+          keyboardShouldPersistTaps="handled">
           <ForgotPasswordForm
             onForgotPassword={onForgotPassword}
             isLoading={isLoading}
@@ -81,6 +90,8 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}

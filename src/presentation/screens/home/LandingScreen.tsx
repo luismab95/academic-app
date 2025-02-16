@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Image} from 'react-native';
+import {Dimensions, Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import DeviceInfo from 'react-native-device-info';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -13,6 +13,8 @@ import {errorStore} from '../../../shared';
 interface Props extends StackScreenProps<RootStackParams, 'LandingScreen'> {}
 
 export const LandingScreen = ({navigation}: Props) => {
+  const screenHeight = Dimensions.get('window').height;
+
   const [isLoading, setIsLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [modalInfo, setModalInfo] = useState({
@@ -54,39 +56,40 @@ export const LandingScreen = ({navigation}: Props) => {
   return (
     <>
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1, paddingHorizontal: 40}}>
           {/* Space */}
           <Layout
             style={{
-              flexDirection: 'row',
+              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: 100,
               paddingHorizontal: 40,
             }}>
             <Image
-              style={{width: 400, height: 400}}
+              style={{width: '100%', height: 300, resizeMode: 'contain'}}
               source={require('../../../assets/images/landing.png')}
+              resizeMode="contain"
             />
           </Layout>
 
           {/* Inputs */}
-          <Layout style={{marginTop: 60}}>
+          <Layout style={{marginTop: screenHeight * 0.01}}>
             <Text
               category="s1"
               style={{textAlign: 'center', fontSize: 36, marginBottom: 30}}>
-              !Obten tus certificados de calificaciones de forma segura ahora
+              ¡Obtén tus certificados de calificaciones de forma segura ahora
               mismo!
             </Text>
           </Layout>
 
           {/* Space */}
-          <Layout style={{height: 80}} />
+          <Layout style={{height: screenHeight * 0.05}} />
 
           {/* Button */}
-          <Layout>
+          <Layout style={{alignItems: 'center'}}>
             <Button
-              style={{borderRadius: 40}}
+              style={{borderRadius: 50, width: '100%'}}
               disabled={isLoading}
               onPress={() => onCreateDevice()}>
               {isLoading ? (
@@ -95,7 +98,10 @@ export const LandingScreen = ({navigation}: Props) => {
                 evaProps => (
                   <Text
                     {...evaProps}
-                    style={{fontSize: 20, color: 'white'}}
+                    style={{
+                      fontSize: 20,
+                      color: 'white',
+                    }}
                     category="label">
                     Empezar
                   </Text>
@@ -105,14 +111,17 @@ export const LandingScreen = ({navigation}: Props) => {
           </Layout>
 
           {/* Space */}
-          <Layout style={{height: 40}} />
+          <Layout style={{marginVertical: screenHeight * 0.05}} />
         </ScrollView>
       </Layout>
+
       {/* MODAL */}
       <Modal
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}
@@ -120,7 +129,8 @@ export const LandingScreen = ({navigation}: Props) => {
             type={modalInfo.type}
             onContinue={onCloseModal}
           />
-        }></Modal>
+        }
+      />
     </>
   );
 };

@@ -1,16 +1,26 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
 import {Input} from '@ui-kitten/components';
 
 interface OptProps {
   length: number;
+  isLoading: boolean;
+  resetOtp: boolean;
   isValid: (arg: boolean) => void;
   onComplete: (otp: string) => void;
 }
 
-export const Opt = ({length = 4, onComplete, isValid}: OptProps) => {
+export const Opt = ({
+  length = 4,
+  isLoading,
+  resetOtp,
+  onComplete,
+  isValid,
+}: OptProps) => {
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputs = useRef<(Input | null)[]>([]);
+
+  const [isLoadingOtp, setIsLoadingOtp] = useState(false);
 
   const handleChange = (text: string, index: number) => {
     let newOtp = [...otp];
@@ -28,6 +38,14 @@ export const Opt = ({length = 4, onComplete, isValid}: OptProps) => {
     }
     isValid(false);
   };
+
+  useEffect(() => {
+    setIsLoadingOtp(isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
+    setOtp(Array(length).fill(''));
+  }, [resetOtp]);
 
   return (
     <View
@@ -47,6 +65,7 @@ export const Opt = ({length = 4, onComplete, isValid}: OptProps) => {
           placeholder="-"
           size="large"
           textAlign="center"
+          disabled={isLoadingOtp}
         />
       ))}
     </View>

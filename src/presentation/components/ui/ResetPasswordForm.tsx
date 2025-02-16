@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Image} from 'react-native';
+import {Dimensions, Image} from 'react-native';
 import {Button, Input, Layout, Text} from '@ui-kitten/components';
 import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
 import {ErrorFieldForm, LoadingIndicator, MyIcon} from './../';
@@ -12,6 +12,8 @@ interface Props {
 }
 
 export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
+  const screenHeight = Dimensions.get('window').height;
+
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [secureTextEntryRecover, setSecureTextEntryRecover] = useState(false);
 
@@ -27,13 +29,15 @@ export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
     <>
       <Layout
         style={{
-          flexDirection: 'row',
+          flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 30,
           paddingHorizontal: 40,
         }}>
-        <Image source={require('../../../assets/images/reset-password.png')} />
+        <Image
+          style={{width: '100%', height: 300, resizeMode: 'contain'}}
+          source={require('../../../assets/images/reset-password.png')}
+        />
       </Layout>
 
       {/* INPUTS */}
@@ -53,7 +57,11 @@ export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
         }) => {
           return (
             <>
-              <Layout style={{marginTop: 20}}>
+              <Layout
+                style={{
+                  height: screenHeight * 0.3,
+                  marginVertical: screenHeight * 0.01,
+                }}>
                 <Text
                   category="s1"
                   style={{textAlign: 'left', fontSize: 20, marginBottom: 30}}>
@@ -81,6 +89,7 @@ export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
                       />
                     </TouchableWithoutFeedback>
                   }
+                  disabled={isLoading}
                   style={{marginBottom: 10}}
                 />
                 <Layout style={{height: 10}} />
@@ -112,17 +121,15 @@ export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
                       />
                     </TouchableWithoutFeedback>
                   }
+                  disabled={isLoading}
                   style={{marginBottom: 10}}
                 />
               </Layout>
 
-              {/* Space */}
-              <Layout style={{height: 60}} />
-
               {/* Button */}
-              <Layout>
+              <Layout style={{marginVertical: screenHeight * 0.01}}>
                 <Button
-                  style={{borderRadius: 40}}
+                  style={{borderRadius: 40, width: '100%'}}
                   disabled={isLoading || !isValid}
                   onPress={() => handleSubmit()}>
                   {isLoading ? (

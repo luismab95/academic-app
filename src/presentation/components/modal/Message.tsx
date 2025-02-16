@@ -48,15 +48,20 @@ export const Message = ({
         break;
     }
     return color;
-  };  
+  };
 
   return (
     <Card
       disabled={true}
       style={{
-        width: width - 40,
-        borderRadius: 20,
+        width: width,
         backgroundColor: appTheme['background-basic-color-1'],
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        position: 'absolute',
+        bottom: 0,
       }}>
       <Layout
         style={{
@@ -67,16 +72,28 @@ export const Message = ({
           paddingHorizontal: 40,
         }}>
         {type === 'success' && (
-          <Image style={{width: 250, height: 250}} source={successImage} />
+          <Image
+            style={{width: '100%', height: 200, resizeMode: 'contain'}}
+            source={successImage}
+          />
         )}
         {type === 'danger' && (
-          <Image style={{width: 250, height: 250}} source={errorImage} />
+          <Image
+            style={{width: '100%', height: 200, resizeMode: 'contain'}}
+            source={errorImage}
+          />
         )}
         {type === 'warning' && (
-          <Image style={{width: 250, height: 250}} source={warningImage} />
+          <Image
+            style={{width: '100%', height: 200, resizeMode: 'contain'}}
+            source={warningImage}
+          />
         )}
         {type === 'info' && (
-          <Image style={{width: 250, height: 250}} source={infoImage} />
+          <Image
+            style={{width: '100%', height: 200, resizeMode: 'contain'}}
+            source={infoImage}
+          />
         )}
       </Layout>
 

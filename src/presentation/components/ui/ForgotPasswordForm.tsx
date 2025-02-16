@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Image} from 'react-native';
+import {Dimensions, Image} from 'react-native';
 import {
   Button,
   Card,
@@ -21,6 +21,8 @@ interface Props {
 }
 
 export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
+  const screenHeight = Dimensions.get('window').height;
+
   const [method, setMethod] = useState<string>('');
   const [contact, setContact] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -51,20 +53,26 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
 
   return (
     <>
-      {/* Space */}
+      {/* IMAGE */}
       <Layout
         style={{
-          flexDirection: 'row',
+          flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 30,
           paddingHorizontal: 40,
         }}>
-        <Image source={require('../../../assets/images/forgot-password.png')} />
+        <Image
+          style={{width: '100%', height: 300, resizeMode: 'contain'}}
+          source={require('../../../assets/images/forgot-password.png')}
+        />
       </Layout>
 
       {method !== '' ? (
-        <Layout style={{marginTop: 60}}>
+        <Layout
+          style={{
+            marginTop: 1,
+            height: screenHeight * 0.3,
+          }}>
           <Text
             category="s1"
             style={{textAlign: 'left', fontSize: 20, marginBottom: 30}}>
@@ -74,6 +82,7 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
           </Text>
           {method === 'email' ? (
             <Input
+              disabled={isLoading}
               placeholder="Correo electrónico"
               keyboardType="email-address"
               autoCapitalize="none"
@@ -104,6 +113,7 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
             />
           ) : (
             <Input
+              disabled={isLoading}
               placeholder="Número celular"
               keyboardType="phone-pad"
               autoCapitalize="none"
@@ -115,7 +125,7 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
                   : 'basic'
               }
               onChangeText={value => {
-                setContact(value);
+                onValidContact(value);
               }}
               onBlur={() => setContactouched(true)}
               value={contact}
@@ -139,7 +149,7 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
           )}
         </Layout>
       ) : (
-        <Layout style={{marginTop: 30}}>
+        <Layout style={{marginVertical: screenHeight * 0.01}}>
           <Text
             category="s1"
             style={{textAlign: 'left', fontSize: 20, marginBottom: 30}}>
@@ -213,11 +223,8 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
         </Layout>
       )}
 
-      {/* Space */}
-      <Layout style={{height: 80}} />
-
       {/* Button */}
-      <Layout>
+      <Layout style={{marginVertical: screenHeight * 0.01}}>
         {method !== '' && (
           <Button
             style={{borderRadius: 40}}

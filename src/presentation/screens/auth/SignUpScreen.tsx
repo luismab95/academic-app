@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {Image} from 'react-native';
+import {Dimensions, Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useFocusEffect} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -22,6 +22,8 @@ import {Formik} from 'formik';
 interface Props extends StackScreenProps<RootStackParams, 'SignUpScreen'> {}
 
 export const SignUpScreen = ({navigation}: Props) => {
+  const screenHeight = Dimensions.get('window').height;
+
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
@@ -67,38 +69,36 @@ export const SignUpScreen = ({navigation}: Props) => {
     <>
       <TopNavigationApp title="" />
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1, paddingHorizontal: 40}}>
+          {/* Imagen */}
           <Layout
             style={{
-              flexDirection: 'row',
+              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
               paddingHorizontal: 40,
             }}>
             <Image
-              style={{height: 400, width: 400}}
+              style={{width: '100%', height: 300, resizeMode: 'contain'}}
               source={require('../../../assets/images/register.png')}
             />
           </Layout>
 
-          <Layout style={{paddingTop: 0}}>
+          {/* Título */}
+          <Layout style={{marginTop: screenHeight * 0.01}}>
             <Text category="h1">Ingresa tus Datos para Crear tu Cuenta</Text>
           </Layout>
 
-          {/* Space */}
-          <Layout style={{height: 20}} />
-
           {/* Inputs */}
           <Formik
-            initialValues={
-              {
-                email: '',
-                password: '',
-                name: '',
-                lastname: '',
-                identification: '',
-              } as Partial<User>
-            }
+            initialValues={{
+              email: '',
+              password: '',
+              name: '',
+              lastname: '',
+              identification: '',
+            }}
             validationSchema={SignUpSchema}
             validateOnMount
             onSubmit={values => onSignUp(values)}>
@@ -118,12 +118,13 @@ export const SignUpScreen = ({navigation}: Props) => {
                   resetForm();
                 }, []),
               );
+
               return (
                 <>
-                  <Layout style={{marginTop: 20}}>
+                  <Layout style={{marginTop: screenHeight * 0.02}}>
                     <Input
                       placeholder="Nombres"
-                      autoCapitalize="none"
+                      autoCapitalize="words"
                       size="large"
                       status={errors.name && touched.name ? 'danger' : 'basic'}
                       onChangeText={handleChange('name')}
@@ -133,13 +134,13 @@ export const SignUpScreen = ({navigation}: Props) => {
                       accessoryLeft={
                         <MyIcon name="text-outline" width={20} height={20} />
                       }
+                      disabled={isLoading}
                       style={{marginBottom: 10}}
                     />
-                    <Layout style={{height: 10}} />
 
                     <Input
                       placeholder="Apellidos"
-                      autoCapitalize="none"
+                      autoCapitalize="words"
                       size="large"
                       status={
                         errors.lastname && touched.lastname ? 'danger' : 'basic'
@@ -151,9 +152,9 @@ export const SignUpScreen = ({navigation}: Props) => {
                       accessoryLeft={
                         <MyIcon name="text-outline" width={20} height={20} />
                       }
+                      disabled={isLoading}
                       style={{marginBottom: 10}}
                     />
-                    <Layout style={{height: 10}} />
 
                     <Input
                       placeholder="Identificación"
@@ -181,9 +182,9 @@ export const SignUpScreen = ({navigation}: Props) => {
                           height={20}
                         />
                       }
+                      disabled={isLoading}
                       style={{marginBottom: 10}}
                     />
-                    <Layout style={{height: 10}} />
 
                     <Input
                       placeholder="Correo electrónico"
@@ -200,9 +201,9 @@ export const SignUpScreen = ({navigation}: Props) => {
                       accessoryLeft={
                         <MyIcon name="email-outline" width={20} height={20} />
                       }
+                      disabled={isLoading}
                       style={{marginBottom: 10}}
                     />
-                    <Layout style={{height: 10}} />
 
                     <Input
                       placeholder="Contraseña"
@@ -228,19 +229,21 @@ export const SignUpScreen = ({navigation}: Props) => {
                           />
                         </TouchableWithoutFeedback>
                       }
+                      disabled={isLoading}
                       style={{marginBottom: 10}}
                     />
                   </Layout>
 
-                  {/* Button */}
-                  <Layout style={{marginTop: 30}}></Layout>
-                  <Layout>
+                  {/* Botón de Crear Cuenta */}
+                  <Layout
+                    style={{
+                      marginTop: screenHeight * 0.05,
+                      alignItems: 'center',
+                    }}>
                     <Button
-                      style={{borderRadius: 50}}
+                      style={{borderRadius: 50, width: '100%'}}
                       disabled={isLoading || !isValid}
-                      onPress={() => {
-                        handleSubmit();
-                      }}>
+                      onPress={() => handleSubmit()}>
                       {isLoading ? (
                         <LoadingIndicator />
                       ) : (
@@ -260,11 +263,10 @@ export const SignUpScreen = ({navigation}: Props) => {
             }}
           </Formik>
 
-          {/* Información para crear cuenta */}
-          <Layout style={{height: 30}} />
+          {/* Enlace para iniciar sesión */}
           <Layout
             style={{
-              alignItems: 'flex-end',
+              marginVertical: screenHeight * 0.02,
               flexDirection: 'row',
               justifyContent: 'center',
             }}>
@@ -273,13 +275,9 @@ export const SignUpScreen = ({navigation}: Props) => {
               status="primary"
               category="s1"
               onPress={() => navigation.navigate('SignInScreen')}>
-              {'  '}
-              Iniciar Sesión{'  '}
+              {'  '} Iniciar Sesión {'  '}
             </Text>
           </Layout>
-
-          {/* Space */}
-          <Layout style={{height: 40}} />
         </ScrollView>
       </Layout>
 
@@ -288,6 +286,8 @@ export const SignUpScreen = ({navigation}: Props) => {
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}
@@ -295,7 +295,8 @@ export const SignUpScreen = ({navigation}: Props) => {
             type={modalInfo.type}
             onContinue={onCloseModal}
           />
-        }></Modal>
+        }
+      />
     </>
   );
 };

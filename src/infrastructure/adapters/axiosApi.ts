@@ -3,7 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import {API_URL} from '@env';
 import {StorageAdapter} from './storage';
 import {AuthSession} from '../../domian/entittes/auth';
-import {authStore} from '../../shared';
+import {authStore, decryptedData, encryptedData} from '../../shared';
 
 const axiosApi = axios.create({
   baseURL: API_URL,
@@ -13,18 +13,35 @@ const axiosApi = axios.create({
 });
 
 axiosApi.interceptors.request.use(async config => {
+  if (
+    !config.url?.includes('/device') &&
+    !config.url?.includes('/public-key')
+  ) {
+    const publickeyServer = await StorageAdapter.getItem('publicKey-server');
+    
+    if (config.data !== undefined)
+      config.data = {data: await encryptedData(config.data, publickeyServer!)};
+  }
   const session = await StorageAdapter.getItem('session');
   const deviceId = await DeviceInfo.getUniqueId();
+  config.headers['x-device-serie'] = deviceId;
   if (session !== null) {
     const {accessToken} = JSON.parse(session) as AuthSession;
     config.headers['Authorization'] = `Bearer ${accessToken}`;
-    config.headers['x-device-serie'] = `${deviceId}`;
   }
   return config;
 });
 
 axiosApi.interceptors.response.use(
   async response => {
+    if (
+      !response.config.url?.includes('/device') &&
+      !response.config.url?.includes('/public-key')
+    ) {
+      const decrypt = await decryptedData(response.data.data);
+      response.data = {...response.data, data: decrypt};
+    }
+
     const accessToken = response.headers['refresh_token'] as string;
     if (accessToken) {
       const {refreshToken, sessionId, login} = authStore.getState();
@@ -34,6 +51,7 @@ axiosApi.interceptors.response.use(
         refreshToken,
       });
     }
+
     return response;
   },
   async error => {

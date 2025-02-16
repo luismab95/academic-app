@@ -91,6 +91,8 @@ export const ProfileScreen = ({navigation}: Props) => {
       <Modal
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCancel}
+        shouldUseContainer={false}
+        animationType="slide"
         visible={visible}>
         <SignOut onCancel={onCancel} onLogout={onLogout} />
       </Modal>

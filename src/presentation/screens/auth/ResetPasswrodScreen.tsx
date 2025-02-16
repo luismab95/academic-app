@@ -12,11 +12,14 @@ import {
 } from '../../components';
 import {servicesContainer} from '../../providers/service.provider';
 import {errorStore} from '../../../shared';
+import {Dimensions} from 'react-native';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'ResetPasswordScreen'> {}
 
 export const ResetPasswordScreen = ({navigation, route}: Props) => {
+  const screenWidth = Dimensions.get('window').width;
+
   const {method, otp, userId} = route.params;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +75,13 @@ export const ResetPasswordScreen = ({navigation, route}: Props) => {
     <>
       <TopNavigationApp title="Crear Nueva Contraseña" />
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: screenWidth > 400 ? 40 : 20,
+          }}
+          keyboardShouldPersistTaps="handled">
           <ResetPasswordForm
             isLoading={isLoading}
             onResetPassword={onResetPassword}
@@ -85,6 +94,8 @@ export const ResetPasswordScreen = ({navigation, route}: Props) => {
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={onCloseModal}
         visible={visibleModal}
+        shouldUseContainer={false}
+        animationType="slide"
         children={
           <Message
             title={modalInfo.title}
