@@ -11,3 +11,4 @@ export * from './loading/LoadingScreen';
 export * from './home/LandingScreen';
 export * from './home/HomeScreen';
 export * from './info/PrivacyPolicyScreen';
+export * from './certificate/CertificateScreen';

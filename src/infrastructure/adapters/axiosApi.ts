@@ -18,7 +18,7 @@ axiosApi.interceptors.request.use(async config => {
     !config.url?.includes('/public-key')
   ) {
     const publickeyServer = await StorageAdapter.getItem('publicKey-server');
-    
+
     if (config.data !== undefined)
       config.data = {data: await encryptedData(config.data, publickeyServer!)};
   }
@@ -29,6 +29,7 @@ axiosApi.interceptors.request.use(async config => {
     const {accessToken} = JSON.parse(session) as AuthSession;
     config.headers['Authorization'] = `Bearer ${accessToken}`;
   }
+
   return config;
 });
 

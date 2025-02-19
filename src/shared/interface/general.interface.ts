@@ -13,4 +13,5 @@ export interface EncryptedData {
   encryptedAESKey: string;
   encryptedMessage: string;
   iv: string;
+  tagRSA: string;
 }

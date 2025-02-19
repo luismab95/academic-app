@@ -108,7 +108,7 @@ export const EditScreen = ({navigation}: Props) => {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
           paddingHorizontal: screenWidth > 400 ? 40 : 20,
         }}
         keyboardShouldPersistTaps="handled">

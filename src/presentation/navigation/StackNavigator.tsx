@@ -3,6 +3,7 @@ import {
   StackCardStyleInterpolator,
 } from '@react-navigation/stack';
 import {
+  CertificateScreen,
   EditScreen,
   ForgotPasswordScreen,
   HomeScreen,
@@ -37,6 +38,7 @@ export type RootStackParams = {
   EditScreen: undefined;
   SecurityScreen: undefined;
   PrivacyPolicyScreen: undefined;
+  CertificateScreen: {certificateId: number};
 };
 
 const Stack = createStackNavigator<RootStackParams>();
@@ -118,6 +120,11 @@ export const StackNavigator = () => {
         options={{cardStyleInterpolator: fadeAnimation}}
         name="PrivacyPolicyScreen"
         component={PrivacyPolicyScreen}
+      />
+      <Stack.Screen
+        options={{cardStyleInterpolator: fadeAnimation}}
+        name="CertificateScreen"
+        component={CertificateScreen}
       />
     </Stack.Navigator>
   );

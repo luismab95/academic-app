@@ -1,6 +1,7 @@
 export * from './ui/Icon';
 export * from './ui/TopNavigation';
 export * from './ui/TopAuthNavigation';
+export * from './ui/CertificateCard';
 export * from './ui/Opt';
 export * from './ui/ListElements';
 export * from './ui/UserAvatar';
