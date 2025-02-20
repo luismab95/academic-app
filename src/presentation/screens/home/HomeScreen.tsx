@@ -13,25 +13,23 @@ export const HomeScreen = ({navigation}: Props) => {
   const screenHeight = Dimensions.get('window').height;
 
   const [info, setInfo] = useState<
-    {id: number; name: string; grade: string; year: string; icon: string}[]
+    {id: number; name: string; grade: string; year: string}[]
   >([
     {
       id: 1,
       name: 'Universidad de Guayaquil',
       grade: 'Máster en Ciberseguridad',
       year: '2024 - 2025',
-      icon: 'https://imgs.search.brave.com/X__xZDxXI2J4b9Q-hqi8AmpouRCeLnWGguLHcXEhRYQ/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi82LzZkL0xv/Z29VR2NvbG9yLnBu/Zy8yMjBweC1Mb2dv/VUdjb2xvci5wbmc',
     },
     {
       id: 2,
       name: 'Escuela Superior Politécnica de Chimborazo',
       grade: 'Ingeniero en Sistemas Informáticos',
       year: '2013 - 2019',
-      icon: 'https://lh3.googleusercontent.com/proxy/QA-cUmLWDntNMYabNlVJ1PXCjFpjZBO3Mdc9L9mEc78P6LhwFBF-qKs-SVjhrU7e3CCr7pNDfEIYUvanSVi80HUPCCrnz5LXvDLkK2rKKwWeuffOhyDIMaM',
     },
   ]);
 
-  const onPressCertificate = (certificateId: number) => {    
+  const onPressCertificate = (certificateId: number) => {
     navigation.navigate('CertificateScreen', {certificateId});
   };
 

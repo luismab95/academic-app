@@ -1,5 +1,5 @@
 import {Button, Card, Layout, Text} from '@ui-kitten/components';
-import {Image} from 'react-native';
+import {MyIcon} from './Icon';
 
 interface Props {
   data: {
@@ -7,7 +7,6 @@ interface Props {
     name: string;
     grade: string;
     year: string;
-    icon: string;
   };
   onPress: (id: number) => void;
 }
@@ -30,15 +29,7 @@ export const CertificateCard = ({data, onPress}: Props) => {
           marginBottom: 10,
         }}>
         {/* Icono */}
-        <Image
-          src={data.icon}
-          style={{
-            width: 80,
-            height: 80,
-            resizeMode: 'contain',
-            marginRight: 10,
-          }}
-        />
+        <MyIcon name="file-text-outline" width={80} height={80} />
         {/* Texto */}
         <Layout
           style={{
