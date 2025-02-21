@@ -12,8 +12,7 @@ export class DeviceService implements DeviceGateway {
       );
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }
@@ -29,8 +28,7 @@ export class DeviceService implements DeviceGateway {
       });
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }

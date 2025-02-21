@@ -11,7 +11,7 @@ import {
 } from '../../components';
 import {errorStore} from '../../../shared';
 import {servicesContainer} from '../../providers/service.provider';
-import { Dimensions } from 'react-native';
+import {Dimensions} from 'react-native';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'VerifyResetPasswordScreen'> {}
@@ -106,15 +106,14 @@ export const VerifyResetPasswordScreen = ({navigation, route}: Props) => {
         onBackdropPress={onCloseModal}
         visible={visibleModal}
         shouldUseContainer={false}
-        animationType="slide"
-        children={
-          <Message
-            title={modalInfo.title}
-            content={modalInfo.content}
-            type={modalInfo.type}
-            onContinue={onCloseModal}
-          />
-        }></Modal>
+        animationType="slide">
+        <Message
+          title={modalInfo.title}
+          content={modalInfo.content}
+          type={modalInfo.type}
+          onContinue={onCloseModal}
+        />
+      </Modal>
     </>
   );
 };

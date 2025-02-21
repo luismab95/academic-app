@@ -1,12 +1,12 @@
 import * as Yup from 'yup';
 
 export const validateEmail = (email: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 };
 
 export const validatePhoneNumber = (phone: string) => {
-  const phoneRegex = /^[0-9]{10,15}$/; // Acepta entre 10 y 15 dígitos
+  const phoneRegex = /^\d{10,15}$/;
   return phoneRegex.test(phone);
 };
 

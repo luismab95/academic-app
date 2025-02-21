@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View} from 'react-native';
-import {Input} from '@ui-kitten/components';
+import {StyleSheet, View} from 'react-native';
+import OTPTextInput from 'react-native-otp-textinput';
+import {appThemeNavigation} from '../../theme/theme';
 
 interface OptProps {
   length: number;
@@ -17,22 +18,13 @@ export const Opt = ({
   onComplete,
   isValid,
 }: OptProps) => {
-  const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
-  const inputs = useRef<(Input | null)[]>([]);
-
+  const theme = appThemeNavigation();
+  const otpInput = useRef<OTPTextInput | null>(null);
   const [isLoadingOtp, setIsLoadingOtp] = useState(false);
 
-  const handleChange = (text: string, index: number) => {
-    let newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-
-    if (text && index < length - 1) {
-      inputs.current[index + 1]?.focus();
-    }
-
-    if (newOtp.join('').length === length && onComplete) {
-      onComplete(newOtp.join(''));
+  const handleChange = (text: string) => {
+    if (text.length === length && onComplete) {
+      onComplete(text);
       isValid(true);
       return;
     }
@@ -41,10 +33,13 @@ export const Opt = ({
 
   useEffect(() => {
     setIsLoadingOtp(isLoading);
+    otpInput.current?.inputs.forEach(input => {
+      input.setNativeProps({editable: !isLoadingOtp});
+    });
   }, [isLoading]);
 
   useEffect(() => {
-    setOtp(Array(length).fill(''));
+    otpInput.current!.clear();
   }, [resetOtp]);
 
   return (
@@ -53,21 +48,27 @@ export const Opt = ({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 20,
+        paddingHorizontal: 20,
       }}>
-      {otp.map((value, index) => (
-        <Input
-          key={index}
-          ref={el => (inputs.current[index] = el)}
-          style={[{width: 80}, index < otp.length - 1 && {marginRight: 10}]}
-          value={value}
-          onChangeText={text => handleChange(text, index)}
-          maxLength={1}
-          placeholder="-"
-          size="large"
-          textAlign="center"
-          disabled={isLoadingOtp}
-        />
-      ))}
+      <OTPTextInput
+        ref={otpInput}
+        autoFocus={true}
+        inputCellLength={1}
+        inputCount={length}
+        textInputStyle={styles.roundedTextInput}
+        handleTextChange={text => handleChange(text)}
+        tintColor={theme.colors.primary}
+        keyboardType="default"
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  roundedTextInput: {
+    borderRadius: 10,
+    borderWidth: 1,
+    width: 80,
+    fontWeight: 'light',
+  },
+});

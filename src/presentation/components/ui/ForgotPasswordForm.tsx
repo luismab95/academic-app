@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useState} from 'react';
 import {Dimensions, Image} from 'react-native';
 import {
   Button,
@@ -12,7 +12,6 @@ import {appThemeNavigation} from '../../theme/theme';
 import {validateEmail, validatePhoneNumber} from '../../../shared';
 import {MyIcon} from './Icon';
 import {LoadingIndicator} from './LoadingIndicator';
-import {useFocusEffect} from '@react-navigation/native';
 import {otpMethod} from '../../../domian';
 
 interface Props {
@@ -22,12 +21,10 @@ interface Props {
 
 export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
   const screenHeight = Dimensions.get('window').height;
-
   const [method, setMethod] = useState<string>('');
   const [contact, setContact] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(false);
-  const [contactTouched, setContactouched] = useState<boolean>(false);
-
+  const [contactTouched, setContactTouched] = useState<boolean>(false);
   const theme = useTheme();
   const appTheme = appThemeNavigation();
 
@@ -35,25 +32,106 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
     setMethod(value);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      setMethod('');
-      setContact('');
-      setContactouched(false);
-      setIsValid(false);
-    }, []),
-  );
+  const validateContact = (contact: string) => {
+    if (method === 'email') {
+      return validateEmail(contact);
+    } else if (method === 'phone') {
+      return validatePhoneNumber(contact);
+    }
+    return false;
+  };
 
-  const onValidContact = (value: string) => {
-    if (method === 'email') setIsValid(validateEmail(value));
-    if (method === 'sms') setIsValid(validatePhoneNumber(value));
+  const handleInputChange = (value: string) => {
     setContact(value);
-    setContactouched(true);
+    setIsValid(validateContact(value));
+  };
+
+  const renderInputField = () => {
+    const placeholder =
+      method === 'email' ? 'Correo electrónico' : 'Número celular';
+    const keyboardType = method === 'email' ? 'email-address' : 'phone-pad';
+    const maxLength = method === 'phone' ? 10 : undefined;
+
+    return (
+      <Input
+        disabled={isLoading}
+        placeholder={placeholder}
+        keyboardType={keyboardType}
+        autoCapitalize="none"
+        size="large"
+        maxLength={maxLength}
+        status={
+          !validateContact(contact) && contactTouched ? 'danger' : 'basic'
+        }
+        onChangeText={handleInputChange}
+        onBlur={() => setContactTouched(true)}
+        value={contact}
+        caption={
+          !validateContact(contact) && contactTouched ? (
+            <Text
+              category="s2"
+              appearance="hint"
+              style={{color: theme['color-danger-500']}}>
+              {method === 'email'
+                ? 'Correo electrónico no válido.'
+                : 'Número celular no válido.'}
+            </Text>
+          ) : undefined
+        }
+        accessoryLeft={
+          <MyIcon
+            name={method === 'email' ? 'email-outline' : 'phone-outline'}
+            width={20}
+            height={20}
+          />
+        }
+        style={{marginBottom: 10}}
+      />
+    );
+  };
+
+  const renderFormHeader = () => {
+    return (
+      <Text
+        category="s1"
+        style={{textAlign: 'left', fontSize: 20, marginBottom: 30}}>
+        Ingresa el{' '}
+        {method === 'email' ? 'correo electrónico' : 'número de celular'}{' '}
+        asociado a tu cuenta
+      </Text>
+    );
+  };
+
+  const handleSubmit = () => {
+    onForgotPassword(contact, method as otpMethod);
+  };
+
+  const renderButton = () => {
+    return (
+      <Layout style={{marginVertical: screenHeight * 0.04}}>
+        <Button
+          style={{borderRadius: 40}}
+          disabled={isLoading || !isValid}
+          onPress={handleSubmit}>
+          {isLoading ? (
+            <LoadingIndicator />
+          ) : (
+            evaProps => (
+              <Text
+                {...evaProps}
+                style={{fontSize: 20, color: 'white'}}
+                category="label">
+                Continuar
+              </Text>
+            )
+          )}
+        </Button>
+      </Layout>
+    );
   };
 
   return (
     <>
-      {/* IMAGE */}
       <Layout
         style={{
           flex: 1,
@@ -66,89 +144,7 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
           source={require('../../../assets/images/forgot-password.png')}
         />
       </Layout>
-
-      {method !== '' ? (
-        <Layout
-          style={{
-            marginTop: 1,
-            height: screenHeight * 0.3,
-          }}>
-          <Text
-            category="s1"
-            style={{textAlign: 'left', fontSize: 20, marginBottom: 30}}>
-            Ingresa el{' '}
-            {method === 'email' ? 'correo electrónico' : 'número de celular'}{' '}
-            asociado a tu cuenta
-          </Text>
-          {method === 'email' ? (
-            <Input
-              disabled={isLoading}
-              placeholder="Correo electrónico"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              status={
-                !validateEmail(contact) && contactTouched ? 'danger' : 'basic'
-              }
-              onChangeText={value => {
-                onValidContact(value);
-              }}
-              onBlur={() => setContactouched(true)}
-              value={contact}
-              caption={
-                !validateEmail(contact) && contactTouched
-                  ? () => (
-                      <Text
-                        category="s2"
-                        appearance="hint"
-                        style={{color: theme['color-danger-500']}}>
-                        Correo eléctronico no válido.
-                      </Text>
-                    )
-                  : undefined
-              }
-              accessoryLeft={
-                <MyIcon name="email-outline" width={20} height={20} />
-              }
-              style={{marginBottom: 10}}
-            />
-          ) : (
-            <Input
-              disabled={isLoading}
-              placeholder="Número celular"
-              keyboardType="phone-pad"
-              autoCapitalize="none"
-              size="large"
-              maxLength={10}
-              status={
-                !validatePhoneNumber(contact) && contactTouched
-                  ? 'danger'
-                  : 'basic'
-              }
-              onChangeText={value => {
-                onValidContact(value);
-              }}
-              onBlur={() => setContactouched(true)}
-              value={contact}
-              caption={
-                !validatePhoneNumber(contact) && contactTouched
-                  ? () => (
-                      <Text
-                        category="s2"
-                        appearance="hint"
-                        style={{color: theme['color-danger-500']}}>
-                        Número celular no válido.
-                      </Text>
-                    )
-                  : undefined
-              }
-              accessoryLeft={
-                <MyIcon name="smartphone-outline" width={20} height={20} />
-              }
-              style={{marginBottom: 10}}
-            />
-          )}
-        </Layout>
-      ) : (
+      {method === '' ? (
         <Layout style={{marginVertical: screenHeight * 0.01}}>
           <Text
             category="s1"
@@ -221,30 +217,13 @@ export const ForgotPasswordForm = ({isLoading, onForgotPassword}: Props) => {
           </Card>
           <Layout style={{height: 20}} />
         </Layout>
+      ) : (
+        <Layout style={{height: screenHeight * 0.3}}>
+          {renderFormHeader()}
+          {renderInputField()}
+          {renderButton()}
+        </Layout>
       )}
-
-      {/* Button */}
-      <Layout style={{marginVertical: screenHeight * 0.01}}>
-        {method !== '' && (
-          <Button
-            style={{borderRadius: 40}}
-            disabled={isLoading || !isValid}
-            onPress={() => onForgotPassword(contact, method as otpMethod)}>
-            {isLoading ? (
-              <LoadingIndicator />
-            ) : (
-              evaProps => (
-                <Text
-                  {...evaProps}
-                  style={{fontSize: 20, color: 'white'}}
-                  category="label">
-                  Continuar
-                </Text>
-              )
-            )}
-          </Button>
-        )}
-      </Layout>
 
       {/* Space */}
       <Layout style={{height: 40}} />

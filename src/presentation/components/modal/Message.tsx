@@ -1,11 +1,4 @@
-import {
-  Button,
-  Card,
-  Divider,
-  Layout,
-  Text,
-  useTheme,
-} from '@ui-kitten/components';
+import {Button, Card, Layout, Text, useTheme} from '@ui-kitten/components';
 import React from 'react';
 import {Image, useWindowDimensions} from 'react-native';
 

@@ -16,7 +16,7 @@ export const ListElements = ({data, ListHeaderComponent}: Props) => {
     <Icon
       {...props}
       name={item.icon}
-      fill={item.styles?.icon.color || props.style.tintColor}
+      fill={item.styles?.icon.color ?? props.style.tintColor}
     />
   );
 

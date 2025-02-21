@@ -1,7 +1,12 @@
 import React from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation, useNavigationState} from '@react-navigation/native'; // Importamos useNavigation
-import {Text, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
+import {
+  Text,
+  TextElement,
+  TopNavigation,
+  TopNavigationAction,
+} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {MyIcon} from './Icon';
 
@@ -30,7 +35,7 @@ const BackAction = (): React.ReactElement => {
   return (
     <TopNavigationAction
       onPress={onIconPress}
-      icon={() => <MyIcon name="arrow-back" />}
+      icon={<MyIcon name="arrow-back" />}
     />
   );
 };
@@ -40,6 +45,12 @@ interface TopNavigationSimpleUsageShowcaseProps {
   leftAction?: boolean;
 }
 
+const titleText = (props: any, title: string): TextElement => (
+  <Text {...props} style={{fontSize: 24}}>
+    {title}
+  </Text>
+);
+
 export const TopNavigationApp = ({
   title,
   leftAction = true,
@@ -47,6 +58,6 @@ export const TopNavigationApp = ({
   <TopNavigation
     style={{paddingTop: 40}}
     accessoryLeft={leftAction ? BackAction : undefined}
-    title={() => <Text style={{fontSize: 24}}>{title}</Text>}
+    title={props => titleText(props, title)}
   />
 );

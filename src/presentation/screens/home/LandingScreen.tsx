@@ -121,16 +121,14 @@ export const LandingScreen = ({navigation}: Props) => {
         onBackdropPress={onCloseModal}
         visible={visibleModal}
         shouldUseContainer={false}
-        animationType="slide"
-        children={
-          <Message
-            title={modalInfo.title}
-            content={modalInfo.content}
-            type={modalInfo.type}
-            onContinue={onCloseModal}
-          />
-        }
-      />
+        animationType="slide">
+        <Message
+          title={modalInfo.title}
+          content={modalInfo.content}
+          type={modalInfo.type}
+          onContinue={onCloseModal}
+        />
+      </Modal>
     </>
   );
 };

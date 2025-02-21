@@ -4,6 +4,8 @@
 
 # Enviroment
 .env
+# SONNAR
+.scannerwork
 
 # Xcode
 #

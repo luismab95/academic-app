@@ -1,4 +1,5 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
+import {Dimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {
@@ -23,8 +24,6 @@ import {User} from '../../../domian';
 import {servicesContainer} from '../../providers/service.provider';
 import {EditUserSchema, errorStore} from '../../../shared';
 import {Formik} from 'formik';
-import {useFocusEffect} from '@react-navigation/native';
-import {Dimensions} from 'react-native';
 
 interface Props extends StackScreenProps<RootStackParams, 'EditScreen'> {}
 
@@ -67,7 +66,7 @@ export const EditScreen = ({navigation}: Props) => {
     getUser();
   }, []);
 
-  const onUpdateUser = async (values: User) => {
+  const onUpdateUser = async (values: User, resetForm: () => void) => {
     setIsLoadingForm(true);
     const response = await servicesContainer.user.updateUser(
       {
@@ -98,7 +97,9 @@ export const EditScreen = ({navigation}: Props) => {
       type: 'success',
     } as PropsMessageModal);
     setVisibleModal(true);
+    setIsLoading(false);
     setIsLoadingForm(false);
+    resetForm();
   };
 
   return (
@@ -127,169 +128,155 @@ export const EditScreen = ({navigation}: Props) => {
             <LoadingIndicator />
           </Layout>
         ) : (
-          <>
-            <Formik
-              initialValues={{...user} as User}
-              validationSchema={EditUserSchema}
-              validateOnMount
-              onSubmit={values => onUpdateUser(values)}>
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                resetForm,
-                values,
-                touched,
-                errors,
-                isValid,
-              }) => {
-                useFocusEffect(
-                  useCallback(() => {
-                    setIsLoading(false);
-                    setIsLoadingForm(false);
-                    resetForm();
-                  }, []),
-                );
+          <Formik
+            initialValues={{...user} as User}
+            validationSchema={EditUserSchema}
+            validateOnMount
+            onSubmit={(values, {resetForm}) => onUpdateUser(values, resetForm)}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              resetForm,
+              values,
+              touched,
+              errors,
+              isValid,
+            }) => {
+              return (
+                <>
+                  {/* Inputs */}
+                  <Layout style={{marginTop: screenHeight * 0.02}}>
+                    <Input
+                      placeholder="Nombres"
+                      autoCapitalize="none"
+                      status={errors.name && touched.name ? 'danger' : 'basic'}
+                      size="large"
+                      onChangeText={handleChange('name')}
+                      onBlur={handleBlur('name')}
+                      value={values.name}
+                      caption={ErrorFieldForm(errors, touched, 'name')}
+                      accessoryLeft={
+                        <MyIcon name="text-outline" width={20} height={20} />
+                      }
+                      disabled={isLoadingForm}
+                      style={{marginBottom: 15}}
+                    />
 
-                return (
-                  <>
-                    {/* Inputs */}
-                    <Layout style={{marginTop: screenHeight * 0.02}}>
-                      <Input
-                        placeholder="Nombres"
-                        autoCapitalize="none"
-                        status={
-                          errors.name && touched.name ? 'danger' : 'basic'
-                        }
-                        size="large"
-                        onChangeText={handleChange('name')}
-                        onBlur={handleBlur('name')}
-                        value={values.name}
-                        caption={ErrorFieldForm(errors, touched, 'name')}
-                        accessoryLeft={
-                          <MyIcon name="text-outline" width={20} height={20} />
-                        }
-                        disabled={isLoadingForm}
-                        style={{marginBottom: 15}}
-                      />
+                    <Input
+                      placeholder="Apellidos"
+                      autoCapitalize="none"
+                      status={
+                        errors.lastname && touched.lastname ? 'danger' : 'basic'
+                      }
+                      size="large"
+                      onChangeText={handleChange('lastname')}
+                      onBlur={handleBlur('lastname')}
+                      value={values.lastname}
+                      caption={ErrorFieldForm(errors, touched, 'lastname')}
+                      accessoryLeft={
+                        <MyIcon name="text-outline" width={20} height={20} />
+                      }
+                      disabled={isLoadingForm}
+                      style={{marginBottom: 15}}
+                    />
 
-                      <Input
-                        placeholder="Apellidos"
-                        autoCapitalize="none"
-                        status={
-                          errors.lastname && touched.lastname
-                            ? 'danger'
-                            : 'basic'
-                        }
-                        size="large"
-                        onChangeText={handleChange('lastname')}
-                        onBlur={handleBlur('lastname')}
-                        value={values.lastname}
-                        caption={ErrorFieldForm(errors, touched, 'lastname')}
-                        accessoryLeft={
-                          <MyIcon name="text-outline" width={20} height={20} />
-                        }
-                        disabled={isLoadingForm}
-                        style={{marginBottom: 15}}
-                      />
+                    <Input
+                      placeholder="Identificación"
+                      keyboardType="numeric"
+                      autoCapitalize="none"
+                      maxLength={10}
+                      size="large"
+                      status={
+                        errors.identification && touched.identification
+                          ? 'danger'
+                          : 'basic'
+                      }
+                      onChangeText={handleChange('identification')}
+                      onBlur={handleBlur('identification')}
+                      value={values.identification}
+                      caption={ErrorFieldForm(
+                        errors,
+                        touched,
+                        'identification',
+                      )}
+                      accessoryLeft={
+                        <MyIcon
+                          name="credit-card-outline"
+                          width={20}
+                          height={20}
+                        />
+                      }
+                      disabled={isLoadingForm}
+                      style={{marginBottom: 15}}
+                    />
 
-                      <Input
-                        placeholder="Identificación"
-                        keyboardType="numeric"
-                        autoCapitalize="none"
-                        maxLength={10}
-                        size="large"
-                        status={
-                          errors.identification && touched.identification
-                            ? 'danger'
-                            : 'basic'
-                        }
-                        onChangeText={handleChange('identification')}
-                        onBlur={handleBlur('identification')}
-                        value={values.identification}
-                        caption={ErrorFieldForm(
-                          errors,
-                          touched,
-                          'identification',
-                        )}
-                        accessoryLeft={
-                          <MyIcon
-                            name="credit-card-outline"
-                            width={20}
-                            height={20}
-                          />
-                        }
-                        disabled={isLoadingForm}
-                        style={{marginBottom: 15}}
-                      />
+                    <Input
+                      placeholder="Correo electrónico"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      size="large"
+                      status={
+                        errors.email && touched.email ? 'danger' : 'basic'
+                      }
+                      onChangeText={handleChange('email')}
+                      onBlur={handleBlur('email')}
+                      value={values.email}
+                      caption={ErrorFieldForm(errors, touched, 'email')}
+                      accessoryLeft={
+                        <MyIcon name="email-outline" width={20} height={20} />
+                      }
+                      disabled={isLoadingForm}
+                      style={{marginBottom: 15}}
+                    />
 
-                      <Input
-                        placeholder="Correo electrónico"
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        size="large"
-                        status={
-                          errors.email && touched.email ? 'danger' : 'basic'
-                        }
-                        onChangeText={handleChange('email')}
-                        onBlur={handleBlur('email')}
-                        value={values.email}
-                        caption={ErrorFieldForm(errors, touched, 'email')}
-                        accessoryLeft={
-                          <MyIcon name="email-outline" width={20} height={20} />
-                        }
-                        disabled={isLoadingForm}
-                        style={{marginBottom: 15}}
-                      />
+                    <Input
+                      placeholder="Telefono"
+                      keyboardType="phone-pad"
+                      autoCapitalize="none"
+                      size="large"
+                      status={
+                        errors.phone && touched.phone ? 'danger' : 'basic'
+                      }
+                      onChangeText={handleChange('phone')}
+                      onBlur={handleBlur('phone')}
+                      value={values.phone}
+                      caption={ErrorFieldForm(errors, touched, 'phone')}
+                      accessoryLeft={
+                        <MyIcon name="phone-outline" width={20} height={20} />
+                      }
+                      disabled={isLoadingForm}
+                      style={{marginBottom: 15}}
+                    />
+                  </Layout>
 
-                      <Input
-                        placeholder="Telefono"
-                        keyboardType="phone-pad"
-                        autoCapitalize="none"
-                        size="large"
-                        status={
-                          errors.phone && touched.phone ? 'danger' : 'basic'
-                        }
-                        onChangeText={handleChange('phone')}
-                        onBlur={handleBlur('phone')}
-                        value={values.phone}
-                        caption={ErrorFieldForm(errors, touched, 'phone')}
-                        accessoryLeft={
-                          <MyIcon name="phone-outline" width={20} height={20} />
-                        }
-                        disabled={isLoadingForm}
-                        style={{marginBottom: 15}}
-                      />
-                    </Layout>
-
-                    {/* Update Button */}
-                    <Layout style={{marginVertical: screenHeight * 0.02}}>
-                      <Button
-                        style={{borderRadius: 50, width: '100%'}}
-                        disabled={isLoadingForm || !isValid}
-                        onPress={() => handleSubmit()}>
-                        {isLoading ? (
-                          <LoadingIndicator />
-                        ) : (
-                          evaProps => (
-                            <Text
-                              {...evaProps}
-                              style={{
-                                fontSize: 20,
-                                color: 'white',
-                              }}
-                              category="label">
-                              Actualizar
-                            </Text>
-                          )
-                        )}
-                      </Button>
-                    </Layout>
-                  </>
-                );
-              }}
-            </Formik>
-          </>
+                  {/* Update Button */}
+                  <Layout style={{marginVertical: screenHeight * 0.02}}>
+                    <Button
+                      style={{borderRadius: 50, width: '100%'}}
+                      disabled={isLoadingForm || !isValid}
+                      onPress={() => handleSubmit()}>
+                      {isLoading ? (
+                        <LoadingIndicator />
+                      ) : (
+                        evaProps => (
+                          <Text
+                            {...evaProps}
+                            style={{
+                              fontSize: 20,
+                              color: 'white',
+                            }}
+                            category="label">
+                            Actualizar
+                          </Text>
+                        )
+                      )}
+                    </Button>
+                  </Layout>
+                </>
+              );
+            }}
+          </Formik>
         )}
       </ScrollView>
 

@@ -1,7 +1,6 @@
-import {useCallback, useState} from 'react';
+import {useState} from 'react';
 import {Dimensions, Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {useFocusEffect} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {Button, Input, Layout, Modal, Text} from '@ui-kitten/components';
 import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
@@ -37,7 +36,7 @@ export const SignUpScreen = ({navigation}: Props) => {
     setSecureTextEntry(!secureTextEntry);
   };
 
-  const onSignUp = async (values: Partial<User>) => {
+  const onSignUp = async (values: Partial<User>, resetForm: () => void) => {
     setIsLoading(true);
     const response = await servicesContainer.auth.signUp(values as User);
 
@@ -58,6 +57,8 @@ export const SignUpScreen = ({navigation}: Props) => {
       type: 'success',
     } as PropsMessageModal);
     setVisibleModal(true);
+    resetForm();
+    setIsLoading(false);
   };
 
   const onCloseModal = () => {
@@ -101,24 +102,16 @@ export const SignUpScreen = ({navigation}: Props) => {
             }}
             validationSchema={SignUpSchema}
             validateOnMount
-            onSubmit={values => onSignUp(values)}>
+            onSubmit={(values, {resetForm}) => onSignUp(values, resetForm)}>
             {({
               handleChange,
               handleBlur,
               handleSubmit,
-              resetForm,
               values,
               touched,
               errors,
               isValid,
             }) => {
-              useFocusEffect(
-                useCallback(() => {
-                  setIsLoading(false);
-                  resetForm();
-                }, []),
-              );
-
               return (
                 <>
                   <Layout style={{marginTop: screenHeight * 0.02}}>
@@ -287,16 +280,14 @@ export const SignUpScreen = ({navigation}: Props) => {
         onBackdropPress={onCloseModal}
         visible={visibleModal}
         shouldUseContainer={false}
-        animationType="slide"
-        children={
-          <Message
-            title={modalInfo.title}
-            content={modalInfo.content}
-            type={modalInfo.type}
-            onContinue={onCloseModal}
-          />
-        }
-      />
+        animationType="slide">
+        <Message
+          title={modalInfo.title}
+          content={modalInfo.content}
+          type={modalInfo.type}
+          onContinue={onCloseModal}
+        />
+      </Modal>
     </>
   );
 };

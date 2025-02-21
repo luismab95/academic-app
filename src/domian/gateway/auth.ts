@@ -1,5 +1,5 @@
 import {GeneralResponse} from '../../shared';
-import {AuthSession, otpMethod, otpType, User} from '../';
+import {AuthSession, otpMethod, otpType, PublicKey, User} from '../';
 
 export interface AuthGateway {
   signIn(
@@ -25,8 +25,5 @@ export interface AuthGateway {
     otp: string,
     type: otpType,
   ): Promise<GeneralResponse<{userId: number; message: string}> | null>;
-  getPublicKey(): Promise<GeneralResponse<{
-    publicKey: string;
-    sha256Hash: string;
-  }> | null>;
+  getPublicKey(): Promise<GeneralResponse<PublicKey> | null>;
 }

@@ -10,7 +10,7 @@ interface Props
   extends StackScreenProps<RootStackParams, 'PrivacyPolicyScreen'> {}
 
 export const PrivacyPolicyScreen = ({navigation}: Props) => {
-  const [date, setDate] = useState(new Date());
+  const [date] = useState(new Date());
 
   return (
     <>
@@ -24,10 +24,10 @@ export const PrivacyPolicyScreen = ({navigation}: Props) => {
 
           <View style={styles.section}>
             <Text style={styles.text}>
-              Nos tomamos muy en serio la privacidad de nuestros
-              usuarios. Esta política de privacidad describe cómo recopilamos,
-              utilizamos y protegemos la información que nos proporcionas al
-              utilizar nuestra aplicación.
+              Nos tomamos muy en serio la privacidad de nuestros usuarios. Esta
+              política de privacidad describe cómo recopilamos, utilizamos y
+              protegemos la información que nos proporcionas al utilizar nuestra
+              aplicación.
             </Text>
           </View>
 

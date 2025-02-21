@@ -2,11 +2,13 @@ import {useEffect, useState} from 'react';
 import {useWindowDimensions} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import {StackScreenProps} from '@react-navigation/stack';
-import {Layout, Modal, Spinner, Text} from '@ui-kitten/components';
+import {Layout, Modal, Spinner} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {servicesContainer} from '../../providers/service.provider';
 import {Message, PropsMessageModal} from '../../components';
-import {errorStore} from '../../../shared';
+import {errorStore, generateKeys} from '../../../shared';
+import {StorageAdapter} from '../../../infrastructure/adapters/storage';
+import {Device} from '../../../domian';
 
 interface Props extends StackScreenProps<RootStackParams, 'LoadingScreen'> {}
 
@@ -44,6 +46,12 @@ export const LoadingScreen = ({navigation}: Props) => {
       if (typeof response.data === 'string') {
         navigation.navigate('LandingScreen');
       } else {
+        const privateKey = await StorageAdapter.getItem('privateKey');
+        const publicKey = await StorageAdapter.getItem('publicKey');
+        if (privateKey === null || publicKey === null) {
+          await generateKeys();
+          await onCreateDevice();
+        }
         navigation.navigate('SignInScreen');
       }
     };
@@ -53,6 +61,31 @@ export const LoadingScreen = ({navigation}: Props) => {
     }, 5000);
     return () => clearTimeout(timer);
   }, []);
+
+  const onCreateDevice = async () => {
+    setIsLoading(true);
+    const device = {
+      name: await DeviceInfo.getDeviceName(),
+      serie: await DeviceInfo.getUniqueId(),
+      type: DeviceInfo.getModel(),
+      operationSystem: DeviceInfo.getSystemName(),
+      version: DeviceInfo.getSystemVersion(),
+    } as Device;
+
+    const response = await servicesContainer.device.createDevice(device);
+
+    if (response === null) {
+      setModalInfo({
+        title: 'Error',
+        content: errorStore.getState().message,
+        type: 'danger',
+      } as PropsMessageModal);
+      setVisibleModal(true);
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(false);
+  };
 
   return (
     <>
@@ -73,15 +106,14 @@ export const LoadingScreen = ({navigation}: Props) => {
         onBackdropPress={onCloseModal}
         visible={visibleModal}
         shouldUseContainer={false}
-        animationType="slide"
-        children={
-          <Message
-            title={modalInfo.title}
-            content={modalInfo.content}
-            type={modalInfo.type}
-            onContinue={onCloseModal}
-          />
-        }></Modal>
+        animationType="slide">
+        <Message
+          title={modalInfo.title}
+          content={modalInfo.content}
+          type={modalInfo.type}
+          onContinue={onCloseModal}
+        />
+      </Modal>
     </>
   );
 };

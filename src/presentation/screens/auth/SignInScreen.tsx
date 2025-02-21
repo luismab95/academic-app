@@ -1,8 +1,7 @@
-import {useCallback, useState} from 'react';
+import {useState} from 'react';
 import {Dimensions, Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
-import {useFocusEffect} from '@react-navigation/native';
 import {Button, Input, Layout, Modal, Text} from '@ui-kitten/components';
 import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
 import {RootStackParams} from '../../navigation/StackNavigator';
@@ -45,7 +44,7 @@ export const SignInScreen = ({navigation}: Props) => {
     setVisibleModal(false);
   };
 
-  const onLogin = async (values: SignIn) => {
+  const onLogin = async (values: SignIn, resetForm: () => void) => {
     setIsLoading(true);
     const response = await servicesContainer.auth.signIn(
       values.email,
@@ -63,6 +62,8 @@ export const SignInScreen = ({navigation}: Props) => {
 
       return;
     }
+    setIsLoading(false);
+    resetForm();
 
     navigation.navigate('SignInMfaScreen', {
       message: response.data,
@@ -101,24 +102,16 @@ export const SignInScreen = ({navigation}: Props) => {
             initialValues={{email: '', password: ''}}
             validationSchema={SignInSchema}
             validateOnMount
-            onSubmit={values => onLogin(values)}>
+            onSubmit={(values, {resetForm}) => onLogin(values, resetForm)}>
             {({
               handleChange,
               handleBlur,
               handleSubmit,
-              resetForm,
               values,
               touched,
               errors,
               isValid,
             }) => {
-              useFocusEffect(
-                useCallback(() => {
-                  setIsLoading(false);
-                  resetForm();
-                }, []),
-              );
-
               return (
                 <>
                   <Layout style={{marginTop: screenHeight * 0.02}}>
@@ -234,16 +227,14 @@ export const SignInScreen = ({navigation}: Props) => {
         onBackdropPress={onCloseModal}
         visible={visibleModal}
         shouldUseContainer={false}
-        animationType="slide"
-        children={
-          <Message
-            title={modalInfo.title}
-            content={modalInfo.content}
-            type={modalInfo.type}
-            onContinue={onCloseModal}
-          />
-        }
-      />
+        animationType="slide">
+        <Message
+          title={modalInfo.title}
+          content={modalInfo.content}
+          type={modalInfo.type}
+          onContinue={onCloseModal}
+        />
+      </Modal>
     </>
   );
 };

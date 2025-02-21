@@ -31,8 +31,10 @@ export const ProfileScreen = ({navigation}: Props) => {
     {
       title: themeContext.theme !== 'dark' ? 'Modo Oscuro' : 'Modo Claro',
       icon: themeContext.theme !== 'dark' ? 'moon-outline' : 'sun-outline',
-      onPress: async () => {
-        await themeContext.toggleTheme();
+      onPress: () => {
+        (async () => {
+          await themeContext.toggleTheme();
+        })();
       },
     },
     {

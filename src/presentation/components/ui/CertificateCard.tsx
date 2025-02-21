@@ -7,8 +7,9 @@ interface Props {
     name: string;
     grade: string;
     year: string;
+    identification: string;
   };
-  onPress: (id: number) => void;
+  onPress: (identification: string, studentId: number) => void;
 }
 
 export const CertificateCard = ({data, onPress}: Props) => {
@@ -51,7 +52,7 @@ export const CertificateCard = ({data, onPress}: Props) => {
       {/* Botón */}
       <Button
         onPress={() => {
-          onPress(data.id);
+          onPress(data.identification, data.id);
         }}
         style={{borderRadius: 50, width: '100%'}}>
         Obtener

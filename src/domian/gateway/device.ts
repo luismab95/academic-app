@@ -1,6 +1,5 @@
 import {GeneralResponse} from '../../shared';
 import {Device} from '../entittes/device';
-import {create} from 'zustand';
 
 export interface DeviceGateway {
   getDeviceBySerie(

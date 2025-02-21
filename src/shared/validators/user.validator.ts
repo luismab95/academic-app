@@ -10,6 +10,6 @@ export const EditUserSchema = Yup.object().shape({
     .required('Identificación es obligatorio.')
     .matches(/^\d{10}$/, 'Identificación no válida.'),
   phone: Yup.string()
-    .matches(/^[0-9]{10,15}$/, 'Número de celular no válido.')
+    .matches(/^\d{10,15}$/, 'Número de celular no válido.')
     .required('Número de celular es obligatorio.'),
 });

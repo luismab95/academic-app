@@ -5,8 +5,9 @@ import {StorageAdapter} from './storage';
 import {AuthSession} from '../../domian/entittes/auth';
 import {authStore, decryptedData, encryptedData} from '../../shared';
 
+const apiURL = API_URL;
 const axiosApi = axios.create({
-  baseURL: API_URL,
+  baseURL: apiURL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -60,7 +61,9 @@ axiosApi.interceptors.response.use(
       const {logout} = authStore.getState();
       await logout!();
     }
-    return Promise.reject(error);
+    return Promise.reject(
+      new Error(error.response?.data?.message || error.message),
+    );
   },
 );
 

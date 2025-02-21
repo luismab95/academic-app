@@ -1,6 +1,13 @@
 import {NetworkInfo} from 'react-native-network-info';
 import {errorStore, GeneralResponse} from '../../shared/';
-import {User, AuthSession, AuthGateway, otpMethod, otpType} from '../../domian';
+import {
+  User,
+  AuthSession,
+  AuthGateway,
+  otpMethod,
+  otpType,
+  PublicKey,
+} from '../../domian';
 import {axiosApi} from '../adapters/axiosApi';
 
 export class AuthService implements AuthGateway {
@@ -20,8 +27,7 @@ export class AuthService implements AuthGateway {
       );
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }
@@ -46,8 +52,7 @@ export class AuthService implements AuthGateway {
       );
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }
@@ -63,8 +68,7 @@ export class AuthService implements AuthGateway {
       );
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }
@@ -75,8 +79,7 @@ export class AuthService implements AuthGateway {
         `/auth/sign-out/${sessionId}`,
       );
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
     }
   }
 
@@ -97,8 +100,7 @@ export class AuthService implements AuthGateway {
       );
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }
@@ -121,21 +123,19 @@ export class AuthService implements AuthGateway {
       });
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }
 
-  async getPublicKey(): Promise<GeneralResponse<string> | null> {
+  async getPublicKey(): Promise<GeneralResponse<PublicKey> | null> {
     try {
-      const {data} = await axiosApi.get<GeneralResponse<string>>(
+      const {data} = await axiosApi.get<GeneralResponse<PublicKey>>(
         '/auth/public-key',
       );
       return data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      errorStore.setState({message: errorMessage});
+      errorStore.setState({message: error.message});
       return null;
     }
   }

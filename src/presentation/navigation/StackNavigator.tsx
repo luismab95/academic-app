@@ -38,7 +38,7 @@ export type RootStackParams = {
   EditScreen: undefined;
   SecurityScreen: undefined;
   PrivacyPolicyScreen: undefined;
-  CertificateScreen: {certificateId: number};
+  CertificateScreen: {identification: string; studentId: number};
 };
 
 const Stack = createStackNavigator<RootStackParams>();

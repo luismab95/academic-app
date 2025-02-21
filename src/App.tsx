@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {Alert, AppState, AppStateStatus} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
@@ -11,14 +11,11 @@ import {appThemeNavigation, ThemeContext} from './presentation/theme/theme';
 import {StackNavigator} from './presentation/navigation/StackNavigator';
 import {AuthProvider} from './presentation/providers/auth.provider';
 import {authStore, ThemeHook, validHash} from './shared';
-import * as eva from '@eva-design/eva';
 import {servicesContainer} from './presentation/providers/service.provider';
 import {StorageAdapter} from './infrastructure/adapters/storage';
+import * as eva from '@eva-design/eva';
 
 ModalService.setShouldUseTopInsets = true;
-interface AppStateChangeHandler {
-  (nextAppState: string): void;
-}
 
 function App(): React.JSX.Element {
   const {theme, toggleTheme} = ThemeHook();
@@ -52,7 +49,6 @@ function App(): React.JSX.Element {
       }
 
       if (!validHash(response.data.publicKey, response.data.sha256Hash)) {
-        
         Alert.alert('Error', 'Error validating public key');
         return;
       }
@@ -66,7 +62,8 @@ function App(): React.JSX.Element {
   return (
     <>
       <IconRegistry icons={EvaIconsPack} />
-      <ThemeContext.Provider value={{theme, toggleTheme}}>
+      <ThemeContext.Provider
+        value={useMemo(() => ({theme, toggleTheme}), [theme, toggleTheme])}>
         <ApplicationProvider {...eva} theme={eva[theme]}>
           <NavigationContainer theme={{...(appThemeNavigation() as any)}}>
             <AuthProvider>

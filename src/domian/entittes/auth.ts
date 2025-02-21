@@ -9,3 +9,8 @@ export interface AuthSession {
 
 export type otpType = 'login' | 'forgot-password' | 'reset-password';
 export type otpMethod = 'email' | 'sms';
+
+export interface PublicKey {
+  publicKey: string;
+  sha256Hash: string;
+}

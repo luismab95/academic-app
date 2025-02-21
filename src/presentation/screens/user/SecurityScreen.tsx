@@ -154,6 +154,35 @@ export const SecurityScreen = ({navigation}: Props) => {
     setIsLoading(false);
   };
 
+  let formToRender;
+
+  if (forgotPassword) {
+    if (verifyOtp) {
+      formToRender = (
+        <ResetPasswordForm
+          isLoading={isLoading}
+          onResetPassword={onResetPassword}
+        />
+      );
+    } else {
+      formToRender = (
+        <VerifyOtp
+          message={message}
+          isLoading={isLoading}
+          onVerifyOtp={onVerifyOtp}
+          onResendOtp={onResendOtp}
+        />
+      );
+    }
+  } else {
+    formToRender = (
+      <ForgotPasswordForm
+        isLoading={isLoading}
+        onForgotPassword={onForgotPassword}
+      />
+    );
+  }
+
   return (
     <Layout style={{flex: 1}}>
       <TopNavigationApp title="Seguridad" />
@@ -164,26 +193,7 @@ export const SecurityScreen = ({navigation}: Props) => {
           paddingHorizontal: screenWidth > 400 ? 40 : 20,
         }}
         keyboardShouldPersistTaps="handled">
-        {forgotPassword ? (
-          verifyOtp ? (
-            <ResetPasswordForm
-              isLoading={isLoading}
-              onResetPassword={onResetPassword}
-            />
-          ) : (
-            <VerifyOtp
-              message={message}
-              isLoading={isLoading}
-              onVerifyOtp={onVerifyOtp}
-              onResendOtp={onResendOtp}
-            />
-          )
-        ) : (
-          <ForgotPasswordForm
-            isLoading={isLoading}
-            onForgotPassword={onForgotPassword}
-          />
-        )}
+        {formToRender}
       </ScrollView>
 
       {/* MODAL */}
@@ -192,15 +202,14 @@ export const SecurityScreen = ({navigation}: Props) => {
         onBackdropPress={onCloseModal}
         visible={visibleModal}
         shouldUseContainer={false}
-        animationType="slide"
-        children={
-          <Message
-            title={modalInfo.title}
-            content={modalInfo.content}
-            type={modalInfo.type}
-            onContinue={onCloseModal}
-          />
-        }></Modal>
+        animationType="slide">
+        <Message
+          title={modalInfo.title}
+          content={modalInfo.content}
+          type={modalInfo.type}
+          onContinue={onCloseModal}
+        />
+      </Modal>
     </Layout>
   );
 };
