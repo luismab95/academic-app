@@ -1,29 +1,17 @@
-import {useColorScheme} from 'react-native';
-import {MD3DarkTheme, MD3LightTheme, MD3Theme} from 'react-native-paper';
+import {createContext} from 'react';
+import {DarkTheme, DefaultTheme} from '@react-navigation/native';
+import {ThemeHook} from '../../shared/hooks/ThemeHook';
 
-const darhTheme = {
-  ...MD3DarkTheme,
-  roundness: 2,
-  colors: {
-    ...MD3DarkTheme.colors,
-    primary: '#3498db',
-    secondary: '#f1c40f',
-    tertiary: '#a1b2c3',
-  },
-} as MD3Theme;
-
-const lightTheme = {
-  ...MD3LightTheme,
-  roundness: 2,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: '#3498db',
-    secondary: '#f1c40f',
-    tertiary: '#a1b2c3',
-  },
-} as MD3Theme;
-
-export const appTheme = (): MD3Theme => {
-  const colorScheme = useColorScheme();
-  return colorScheme === 'dark' ? darhTheme : lightTheme;
+export const appThemeNavigation = () => {
+  const {theme} = ThemeHook();
+  const navigationTheme = theme === 'dark' ? DarkTheme : DefaultTheme;
+  return {
+    dark: theme === 'dark',
+    colors: {...navigationTheme.colors},
+  } as ReactNavigation.Theme;
 };
+
+export const ThemeContext = createContext({
+  theme: 'light',
+  toggleTheme: async () => {},
+});

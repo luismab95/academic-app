@@ -1,28 +1,78 @@
-import {PaperProvider, Text} from 'react-native-paper';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {appTheme} from './presentation/theme/theme';
-import IonIcon from '@react-native-vector-icons/ionicons';
+import {useEffect, useMemo} from 'react';
+import {Alert, AppState, AppStateStatus} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {EvaIconsPack} from '@ui-kitten/eva-icons';
+import {
+  ApplicationProvider,
+  IconRegistry,
+  ModalService,
+} from '@ui-kitten/components';
+import {appThemeNavigation, ThemeContext} from './presentation/theme/theme';
+import {StackNavigator} from './presentation/navigation/StackNavigator';
+import {AuthProvider} from './presentation/providers/auth.provider';
+import {authStore, ThemeHook, validHash} from './shared';
+import {servicesContainer} from './presentation/providers/service.provider';
+import {StorageAdapter} from './infrastructure/adapters/storage';
+import * as eva from '@eva-design/eva';
+
+ModalService.setShouldUseTopInsets = true;
 
 function App(): React.JSX.Element {
+  const {theme, toggleTheme} = ThemeHook();
+  const {logout} = authStore();
+
+  useEffect(() => {
+    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        await logout!();
+      }
+    };
+
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    const getPublicKey = async () => {
+      const response = await servicesContainer.auth.getPublicKey();
+
+      if (response === null) {
+        Alert.alert('Error', 'Error getting public key');
+        await StorageAdapter.removeItem('publicKey-server');
+        return;
+      }
+
+      if (!validHash(response.data.publicKey, response.data.sha256Hash)) {
+        Alert.alert('Error', 'Error validating public key');
+        return;
+      }
+
+      await StorageAdapter.setItem('publicKey-server', response.data.publicKey);
+    };
+
+    getPublicKey();
+  }, []);
+
   return (
-    <PaperProvider
-      theme={appTheme()}
-      settings={{
-        icon: props => <IonIcon {...(props as any)} />,
-      }}>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: appTheme().colors.background,
-        }}>
-        <Text style={{fontSize: 18, textAlign: 'center', marginTop: 20}}>
-          Welcome, but there is nothing to see here!
-        </Text>
-      </SafeAreaView>
-      j
-    </PaperProvider>
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ThemeContext.Provider
+        value={useMemo(() => ({theme, toggleTheme}), [theme, toggleTheme])}>
+        <ApplicationProvider {...eva} theme={eva[theme]}>
+          <NavigationContainer theme={{...(appThemeNavigation())}}>
+            <AuthProvider>
+              <StackNavigator />
+            </AuthProvider>
+          </NavigationContainer>
+        </ApplicationProvider>
+      </ThemeContext.Provider>
+    </>
   );
 }
 
