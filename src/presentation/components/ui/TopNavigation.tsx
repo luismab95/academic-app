@@ -56,7 +56,7 @@ export const TopNavigationApp = ({
   leftAction = true,
 }: TopNavigationSimpleUsageShowcaseProps): React.ReactElement => (
   <TopNavigation
-    style={{paddingTop: 40}}
+    style={{paddingTop: 40, paddingBottom: 20}}
     accessoryLeft={leftAction ? BackAction : undefined}
     title={props => titleText(props, title)}
   />

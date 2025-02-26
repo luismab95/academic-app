@@ -1,20 +1,15 @@
 import {useEffect, useState} from 'react';
-import {Dimensions} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
-import {
-  Button,
-  Divider,
-  Input,
-  Layout,
-  Modal,
-  Text,
-} from '@ui-kitten/components';
+import {Button, Divider, Input, Layout, Text} from '@ui-kitten/components';
+import {Formik} from 'formik';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {
   ErrorFieldForm,
   LoadingIndicator,
-  Message,
+  LoadingView,
+  ModalApp,
   MyIcon,
   PropsMessageModal,
   TopNavigationApp,
@@ -22,40 +17,28 @@ import {
 } from '../../components';
 import {User} from '../../../domian';
 import {servicesContainer} from '../../providers/service.provider';
-import {EditUserSchema, errorStore} from '../../../shared';
-import {Formik} from 'formik';
+import {EditUserSchema, errorStore, ModalHook} from '../../../shared';
 
 interface Props extends StackScreenProps<RootStackParams, 'EditScreen'> {}
 
 export const EditScreen = ({navigation}: Props) => {
-  const screenWidth = Dimensions.get('window').width;
-  const screenHeight = Dimensions.get('window').height;
+  const {width, height} = useWindowDimensions();
 
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
-
-  const onCloseModal = () => {
-    setVisibleModal(false);
-  };
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
   useEffect(() => {
     const getUser = async () => {
       setIsLoading(true);
       const response = await servicesContainer.user.getUserById();
       if (response === null) {
-        setModalInfo({
+        loadModalInfo({
           title: 'Error',
           content: errorStore.getState().message,
           type: 'danger',
         } as PropsMessageModal);
-        setVisibleModal(true);
         setIsLoading(false);
         return;
       }
@@ -80,23 +63,21 @@ export const EditScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoadingForm(false);
 
       return;
     }
 
-    setModalInfo({
+    loadModalInfo({
       title: 'Exito',
       content: response.data,
       type: 'success',
     } as PropsMessageModal);
-    setVisibleModal(true);
     setIsLoading(false);
     setIsLoadingForm(false);
     resetForm();
@@ -110,43 +91,36 @@ export const EditScreen = ({navigation}: Props) => {
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: 'flex-start',
-          paddingHorizontal: screenWidth > 400 ? 40 : 20,
-        }}
-        keyboardShouldPersistTaps="handled">
-        {/* Avatar */}
-        <UserAvatar />
-        <Divider style={{marginVertical: 20}} />
-
+          paddingHorizontal: width > 400 ? 40 : 20,
+        }}>
         {isLoading ? (
-          <Layout
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 300,
-            }}>
-            <LoadingIndicator />
-          </Layout>
+          <LoadingView />
         ) : (
-          <Formik
-            initialValues={{...user} as User}
-            validationSchema={EditUserSchema}
-            validateOnMount
-            onSubmit={(values, {resetForm}) => onUpdateUser(values, resetForm)}>
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              resetForm,
-              values,
-              touched,
-              errors,
-              isValid,
-            }) => {
-              return (
+          <>
+            {/* Avatar */}
+            <UserAvatar />
+            <Divider style={{marginVertical: 20}} />
+
+            {/* FORM */}
+            <Formik
+              initialValues={{...user} as User}
+              validationSchema={EditUserSchema}
+              validateOnMount
+              onSubmit={(values, {resetForm}) =>
+                onUpdateUser(values, resetForm)
+              }>
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                touched,
+                errors,
+                isValid,
+              }) => (
                 <>
                   {/* Inputs */}
-                  <Layout style={{marginTop: screenHeight * 0.02}}>
+                  <Layout style={{marginTop: height * 0.02}}>
                     <Input
                       placeholder="Nombres"
                       autoCapitalize="none"
@@ -160,7 +134,7 @@ export const EditScreen = ({navigation}: Props) => {
                         <MyIcon name="text-outline" width={20} height={20} />
                       }
                       disabled={isLoadingForm}
-                      style={{marginBottom: 15}}
+                      style={{marginBottom: 20}}
                     />
 
                     <Input
@@ -178,7 +152,7 @@ export const EditScreen = ({navigation}: Props) => {
                         <MyIcon name="text-outline" width={20} height={20} />
                       }
                       disabled={isLoadingForm}
-                      style={{marginBottom: 15}}
+                      style={{marginBottom: 20}}
                     />
 
                     <Input
@@ -208,7 +182,7 @@ export const EditScreen = ({navigation}: Props) => {
                         />
                       }
                       disabled={isLoadingForm}
-                      style={{marginBottom: 15}}
+                      style={{marginBottom: 20}}
                     />
 
                     <Input
@@ -226,8 +200,8 @@ export const EditScreen = ({navigation}: Props) => {
                       accessoryLeft={
                         <MyIcon name="email-outline" width={20} height={20} />
                       }
-                      disabled={isLoadingForm}
-                      style={{marginBottom: 15}}
+                      disabled={true}
+                      style={{marginBottom: 20}}
                     />
 
                     <Input
@@ -246,12 +220,12 @@ export const EditScreen = ({navigation}: Props) => {
                         <MyIcon name="phone-outline" width={20} height={20} />
                       }
                       disabled={isLoadingForm}
-                      style={{marginBottom: 15}}
+                      style={{marginBottom: 20}}
                     />
                   </Layout>
 
                   {/* Update Button */}
-                  <Layout style={{marginVertical: screenHeight * 0.02}}>
+                  <Layout style={{marginVertical: height * 0.03}}>
                     <Button
                       style={{borderRadius: 50, width: '100%'}}
                       disabled={isLoadingForm || !isValid}
@@ -274,26 +248,19 @@ export const EditScreen = ({navigation}: Props) => {
                     </Button>
                   </Layout>
                 </>
-              );
-            }}
-          </Formik>
+              )}
+            </Formik>
+          </>
         )}
       </ScrollView>
 
       {/* Modal */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        shouldUseContainer={false}
-        animationType="slide"
-        visible={visibleModal}>
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModal}
+        modalInfo={modalInfo}
+      />
     </Layout>
   );
 };

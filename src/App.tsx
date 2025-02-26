@@ -65,7 +65,7 @@ function App(): React.JSX.Element {
       <ThemeContext.Provider
         value={useMemo(() => ({theme, toggleTheme}), [theme, toggleTheme])}>
         <ApplicationProvider {...eva} theme={eva[theme]}>
-          <NavigationContainer theme={{...(appThemeNavigation() as any)}}>
+          <NavigationContainer theme={{...(appThemeNavigation())}}>
             <AuthProvider>
               <StackNavigator />
             </AuthProvider>

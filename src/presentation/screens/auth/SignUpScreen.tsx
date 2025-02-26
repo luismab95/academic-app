@@ -1,36 +1,31 @@
 import {useState} from 'react';
-import {Dimensions, Image} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
-import {Button, Input, Layout, Modal, Text} from '@ui-kitten/components';
-import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
+import {Input, Layout, Text} from '@ui-kitten/components';
+import {Formik} from 'formik';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {
+  ButtonLoading,
   ErrorFieldForm,
-  LoadingIndicator,
-  Message,
+  HeaderForm,
+  InputPassword,
+  ModalApp,
   MyIcon,
   PropsMessageModal,
   TopNavigationApp,
 } from '../../components';
 import {User} from '../../../domian';
 import {servicesContainer} from '../../providers/service.provider';
-import {errorStore, SignUpSchema} from '../../../shared';
-import {Formik} from 'formik';
+import {errorStore, ModalHook, SignUpSchema} from '../../../shared';
 
 interface Props extends StackScreenProps<RootStackParams, 'SignUpScreen'> {}
 
 export const SignUpScreen = ({navigation}: Props) => {
-  const screenHeight = Dimensions.get('window').height;
-
+  const {width, height} = useWindowDimensions();
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
   const toggleSecureEntry = (): void => {
     setSecureTextEntry(!secureTextEntry);
@@ -41,29 +36,27 @@ export const SignUpScreen = ({navigation}: Props) => {
     const response = await servicesContainer.auth.signUp(values as User);
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
 
-    setModalInfo({
+    loadModalInfo({
       title: 'Exito',
       content: response.data,
       type: 'success',
     } as PropsMessageModal);
-    setVisibleModal(true);
     resetForm();
     setIsLoading(false);
   };
 
-  const onCloseModal = () => {
-    setVisibleModal(false);
+  const onCloseModalScreen = () => {
     if (modalInfo.type === 'success') navigation.navigate('SignInScreen');
+    onCloseModal();
   };
 
   return (
@@ -71,25 +64,15 @@ export const SignUpScreen = ({navigation}: Props) => {
       <TopNavigationApp title="" />
       <Layout style={{flex: 1}}>
         <ScrollView
-          contentContainerStyle={{flexGrow: 1, paddingHorizontal: 40}}>
-          {/* Imagen */}
-          <Layout
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 40,
-            }}>
-            <Image
-              style={{width: '100%', height: 300, resizeMode: 'contain'}}
-              source={require('../../../assets/images/register.png')}
-            />
-          </Layout>
-
-          {/* Título */}
-          <Layout style={{marginTop: screenHeight * 0.01}}>
-            <Text category="h1">Ingresa tus Datos para Crear tu Cuenta</Text>
-          </Layout>
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: width > 400 ? 40 : 20,
+          }}>
+          <HeaderForm
+            image={require('../../../assets/images/register.png')}
+            title="Ingresa tus Datos para Crear tu Cuenta"
+          />
 
           {/* Inputs */}
           <Formik
@@ -111,155 +94,121 @@ export const SignUpScreen = ({navigation}: Props) => {
               touched,
               errors,
               isValid,
-            }) => {
-              return (
-                <>
-                  <Layout style={{marginTop: screenHeight * 0.02}}>
-                    <Input
-                      placeholder="Nombres"
-                      autoCapitalize="words"
-                      size="large"
-                      status={errors.name && touched.name ? 'danger' : 'basic'}
-                      onChangeText={handleChange('name')}
-                      onBlur={handleBlur('name')}
-                      value={values.name}
-                      caption={ErrorFieldForm(errors, touched, 'name')}
-                      accessoryLeft={
-                        <MyIcon name="text-outline" width={20} height={20} />
-                      }
-                      disabled={isLoading}
-                      style={{marginBottom: 10}}
-                    />
+            }) => (
+              <>
+                <Layout style={{marginTop: height * 0.02}}>
+                  <Input
+                    placeholder="Correo electrónico"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    size="large"
+                    status={errors.email && touched.email ? 'danger' : 'basic'}
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    value={values.email}
+                    caption={ErrorFieldForm(errors, touched, 'email')}
+                    accessoryLeft={
+                      <MyIcon name="email-outline" width={20} height={20} />
+                    }
+                    disabled={isLoading}
+                    style={{marginBottom: 20}}
+                  />
 
-                    <Input
-                      placeholder="Apellidos"
-                      autoCapitalize="words"
-                      size="large"
-                      status={
-                        errors.lastname && touched.lastname ? 'danger' : 'basic'
-                      }
-                      onChangeText={handleChange('lastname')}
-                      onBlur={handleBlur('lastname')}
-                      value={values.lastname}
-                      caption={ErrorFieldForm(errors, touched, 'lastname')}
-                      accessoryLeft={
-                        <MyIcon name="text-outline" width={20} height={20} />
-                      }
-                      disabled={isLoading}
-                      style={{marginBottom: 10}}
-                    />
+                  <Input
+                    placeholder="Nombres"
+                    autoCapitalize="words"
+                    size="large"
+                    status={errors.name && touched.name ? 'danger' : 'basic'}
+                    onChangeText={handleChange('name')}
+                    onBlur={handleBlur('name')}
+                    value={values.name}
+                    caption={ErrorFieldForm(errors, touched, 'name')}
+                    accessoryLeft={
+                      <MyIcon name="text-outline" width={20} height={20} />
+                    }
+                    disabled={isLoading}
+                    style={{marginBottom: 20}}
+                  />
 
-                    <Input
-                      placeholder="Identificación"
-                      keyboardType="numeric"
-                      autoCapitalize="none"
-                      maxLength={10}
-                      size="large"
-                      status={
-                        errors.identification && touched.identification
-                          ? 'danger'
-                          : 'basic'
-                      }
-                      onChangeText={handleChange('identification')}
-                      onBlur={handleBlur('identification')}
-                      value={values.identification}
-                      caption={ErrorFieldForm(
-                        errors,
-                        touched,
-                        'identification',
-                      )}
-                      accessoryLeft={
-                        <MyIcon
-                          name="credit-card-outline"
-                          width={20}
-                          height={20}
-                        />
-                      }
-                      disabled={isLoading}
-                      style={{marginBottom: 10}}
-                    />
+                  <Input
+                    placeholder="Apellidos"
+                    autoCapitalize="words"
+                    size="large"
+                    status={
+                      errors.lastname && touched.lastname ? 'danger' : 'basic'
+                    }
+                    onChangeText={handleChange('lastname')}
+                    onBlur={handleBlur('lastname')}
+                    value={values.lastname}
+                    caption={ErrorFieldForm(errors, touched, 'lastname')}
+                    accessoryLeft={
+                      <MyIcon name="text-outline" width={20} height={20} />
+                    }
+                    disabled={isLoading}
+                    style={{marginBottom: 20}}
+                  />
 
-                    <Input
-                      placeholder="Correo electrónico"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      size="large"
-                      status={
-                        errors.email && touched.email ? 'danger' : 'basic'
-                      }
-                      onChangeText={handleChange('email')}
-                      onBlur={handleBlur('email')}
-                      value={values.email}
-                      caption={ErrorFieldForm(errors, touched, 'email')}
-                      accessoryLeft={
-                        <MyIcon name="email-outline" width={20} height={20} />
-                      }
-                      disabled={isLoading}
-                      style={{marginBottom: 10}}
-                    />
+                  <Input
+                    placeholder="Identificación"
+                    keyboardType="numeric"
+                    autoCapitalize="none"
+                    maxLength={10}
+                    size="large"
+                    status={
+                      errors.identification && touched.identification
+                        ? 'danger'
+                        : 'basic'
+                    }
+                    onChangeText={handleChange('identification')}
+                    onBlur={handleBlur('identification')}
+                    value={values.identification}
+                    caption={ErrorFieldForm(errors, touched, 'identification')}
+                    accessoryLeft={
+                      <MyIcon
+                        name="credit-card-outline"
+                        width={20}
+                        height={20}
+                      />
+                    }
+                    disabled={isLoading}
+                    style={{marginBottom: 20}}
+                  />
 
-                    <Input
-                      placeholder="Contraseña"
-                      autoCapitalize="none"
-                      size="large"
-                      secureTextEntry={!secureTextEntry}
-                      status={
-                        errors.password && touched.password ? 'danger' : 'basic'
-                      }
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      value={values.password}
-                      caption={ErrorFieldForm(errors, touched, 'password')}
-                      accessoryLeft={
-                        <MyIcon name="lock-outline" width={20} height={20} />
-                      }
-                      accessoryRight={
-                        <TouchableWithoutFeedback onPress={toggleSecureEntry}>
-                          <MyIcon
-                            name={!secureTextEntry ? 'eye' : 'eye-off'}
-                            width={20}
-                            height={20}
-                          />
-                        </TouchableWithoutFeedback>
-                      }
-                      disabled={isLoading}
-                      style={{marginBottom: 10}}
-                    />
-                  </Layout>
+                  <InputPassword
+                    secureTextEntry={secureTextEntry}
+                    errors={errors}
+                    touched={touched}
+                    values={values}
+                    isLoading={isLoading}
+                    placeholder="Contraseña"
+                    field="password"
+                    toggleSecureEntry={toggleSecureEntry}
+                    handleChange={handleChange('password')}
+                    handleBlur={handleBlur('password')}
+                  />
+                </Layout>
 
-                  {/* Botón de Crear Cuenta */}
-                  <Layout
-                    style={{
-                      marginTop: screenHeight * 0.05,
-                      alignItems: 'center',
-                    }}>
-                    <Button
-                      style={{borderRadius: 50, width: '100%'}}
-                      disabled={isLoading || !isValid}
-                      onPress={() => handleSubmit()}>
-                      {isLoading ? (
-                        <LoadingIndicator />
-                      ) : (
-                        evaProps => (
-                          <Text
-                            {...evaProps}
-                            style={{fontSize: 20, color: 'white'}}
-                            category="label">
-                            Crear Cuenta
-                          </Text>
-                        )
-                      )}
-                    </Button>
-                  </Layout>
-                </>
-              );
-            }}
+                {/* Botón de Crear Cuenta */}
+                <Layout
+                  style={{
+                    alignItems: 'center',
+                    marginTop: height * 0.03,
+                  }}>
+                  <ButtonLoading
+                    label="Crear Cuenta"
+                    isValid={isValid}
+                    isLoading={isLoading}
+                    handleSubmit={handleSubmit}
+                  />
+                </Layout>
+              </>
+            )}
           </Formik>
 
           {/* Enlace para iniciar sesión */}
           <Layout
             style={{
-              marginVertical: screenHeight * 0.02,
+              marginVertical: height * 0.02,
               flexDirection: 'row',
               justifyContent: 'center',
             }}>
@@ -275,19 +224,12 @@ export const SignUpScreen = ({navigation}: Props) => {
       </Layout>
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModalScreen}
+        modalInfo={modalInfo}
+      />
     </>
   );
 };

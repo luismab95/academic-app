@@ -1,6 +1,6 @@
-import {Button, Card, Layout, Text, useTheme} from '@ui-kitten/components';
 import React from 'react';
 import {Image, useWindowDimensions} from 'react-native';
+import {Button, Card, Layout, Text, useTheme} from '@ui-kitten/components';
 
 export interface PropsMessageModal {
   title: string;

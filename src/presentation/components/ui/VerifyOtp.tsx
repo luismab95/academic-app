@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
-import {Dimensions, Image} from 'react-native';
+import {Image, useWindowDimensions, View} from 'react-native';
 import {Button, Layout, Text} from '@ui-kitten/components';
-import {Opt} from './Opt';
 import {LoadingIndicator} from './LoadingIndicator';
+import {Opt} from './Opt';
 
 interface Props {
   message: string;
@@ -17,9 +17,9 @@ export const VerifyOtp = ({
   onVerifyOtp,
   onResendOtp,
 }: Props) => {
-  const screenWidth = Dimensions.get('window').width;
+  const {width, height} = useWindowDimensions();
 
-  const [seconds, setSeconds] = useState(300);
+  const [seconds, setSeconds] = useState(3);
   const [isValidOtp, setIsValidOtp] = useState(false);
   const [resetOtp, setResetOtp] = useState(false);
   const [otp, setOtp] = useState('');
@@ -56,21 +56,21 @@ export const VerifyOtp = ({
   return (
     <>
       {/* Imagen OTP */}
-      <Layout
-        style={{alignItems: 'center', marginVertical: screenWidth * 0.05}}>
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
         <Image
-          style={{width: '100%', height: 300, resizeMode: 'contain'}}
+          style={{width: '100%', height: 300}}
           source={require('../../../assets/images/otp.png')}
+          resizeMode="contain"
         />
-      </Layout>
+      </View>
 
       {/* Mensaje OTP */}
-      <Layout style={{alignItems: 'center', marginBottom: screenWidth * 0.1}}>
+      <Layout style={{alignItems: 'center', marginVertical: height * 0.03}}>
         <Text style={{textAlign: 'center'}}>{message}</Text>
       </Layout>
 
       {/* Campo OTP */}
-      <Layout style={{alignItems: 'center', marginBottom: screenWidth * 0.1}}>
+      <Layout style={{alignItems: 'center', marginVertical: height * 0.03}}>
         <Opt
           length={4}
           onComplete={onGetOtp}
@@ -81,7 +81,7 @@ export const VerifyOtp = ({
       </Layout>
 
       {/* Contador de reenvío */}
-      <Layout style={{alignItems: 'center', marginBottom: screenWidth * 0.1}}>
+      <Layout style={{alignItems: 'center', marginVertical: height * 0.03}}>
         {!sendOtp ? (
           <Text>
             Reenviar código en <Text status="primary">{seconds}</Text> segundos
@@ -98,10 +98,9 @@ export const VerifyOtp = ({
       </Layout>
 
       {/* Botón de Verificación */}
-      <Layout
-        style={{alignItems: 'center', marginVertical: screenWidth * 0.05}}>
+      <Layout style={{alignItems: 'center', marginVertical: width * 0.03}}>
         <Button
-          style={{borderRadius: 50, width: '80%'}}
+          style={{borderRadius: 50, width: '100%'}}
           disabled={isLoading || !isValidOtp}
           onPress={() => onVerifyOtp(otp)}>
           {isLoading ? (

@@ -1,37 +1,28 @@
 import {useCallback, useState} from 'react';
+import {useWindowDimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
-import {Layout, Modal} from '@ui-kitten/components';
+import {Layout} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {
   ForgotPasswordForm,
-  Message,
+  ModalApp,
   PropsMessageModal,
   TopNavigationApp,
 } from '../../components';
-import {servicesContainer} from '../../providers/service.provider';
-import {errorStore} from '../../../shared';
 import {otpMethod} from '../../../domian';
-import {Dimensions} from 'react-native';
+import {servicesContainer} from '../../providers/service.provider';
+import {errorStore, ModalHook} from '../../../shared';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'ForgotPasswordScreen'> {}
 
 export const ForgotPasswordScreen = ({navigation}: Props) => {
-  const screenWidth = Dimensions.get('window').width;
+  const {height} = useWindowDimensions();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
-
-  const onCloseModal = () => {
-    setVisibleModal(false);
-  };
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
   const onForgotPassword = async (contact: string, method: otpMethod) => {
     setIsLoading(true);
@@ -43,12 +34,11 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
 
       return;
@@ -75,9 +65,8 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'center',
-            paddingHorizontal: screenWidth > 400 ? 40 : 20,
-          }}
-          keyboardShouldPersistTaps="handled">
+            paddingHorizontal: height > 400 ? 40 : 20,
+          }}>
           <ForgotPasswordForm
             onForgotPassword={onForgotPassword}
             isLoading={isLoading}
@@ -86,20 +75,12 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
       </Layout>
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        {' '}
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModal}
+        modalInfo={modalInfo}
+      />
     </>
   );
 };

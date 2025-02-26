@@ -1,7 +1,7 @@
 import {Text, useTheme} from '@ui-kitten/components';
 import {ErrorMessage, FormikErrors, FormikTouched} from 'formik';
 
-interface DynamicFormFields {
+export interface DynamicFormFields {
   [key: string]: any;
 }
 

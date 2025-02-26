@@ -1,21 +1,21 @@
 import {useState} from 'react';
-import {Dimensions, Image} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
-import {Button, Input, Layout, Modal, Text} from '@ui-kitten/components';
-import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
+import {Input, Layout, Text} from '@ui-kitten/components';
+import {Formik} from 'formik';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {
+  ButtonLoading,
   ErrorFieldForm,
-  LoadingIndicator,
-  Message,
+  HeaderForm,
+  InputPassword,
+  ModalApp,
   MyIcon,
   PropsMessageModal,
-  TopNavigationApp,
 } from '../../components';
 import {servicesContainer} from '../../providers/service.provider';
-import {SignInSchema, errorStore} from '../../../shared';
-import {Formik} from 'formik';
+import {ModalHook, SignInSchema, errorStore} from '../../../shared';
 
 interface SignIn {
   email: string;
@@ -25,23 +25,14 @@ interface SignIn {
 interface Props extends StackScreenProps<RootStackParams, 'SignInScreen'> {}
 
 export const SignInScreen = ({navigation}: Props) => {
-  const screenHeight = Dimensions.get('window').height;
+  const {width, height} = useWindowDimensions();
 
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
   const toggleSecureEntry = (): void => {
     setSecureTextEntry(!secureTextEntry);
-  };
-
-  const onCloseModal = () => {
-    setVisibleModal(false);
   };
 
   const onLogin = async (values: SignIn, resetForm: () => void) => {
@@ -52,12 +43,11 @@ export const SignInScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
 
       return;
@@ -73,29 +63,17 @@ export const SignInScreen = ({navigation}: Props) => {
 
   return (
     <>
-      <TopNavigationApp title="" leftAction={false} />
       <Layout style={{flex: 1}}>
         <ScrollView
-          contentContainerStyle={{flexGrow: 1, paddingHorizontal: 40}}>
-          {/* Imagen */}
-          <Layout
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 40,
-            }}>
-            <Image
-              style={{width: '100%', height: 300, resizeMode: 'contain'}}
-              source={require('../../../assets/images/login.png')}
-              resizeMode="contain"
-            />
-          </Layout>
-
-          {/* Título */}
-          <Layout style={{marginTop: screenHeight * 0.01}}>
-            <Text category="h1">Inicie Sesión en su Cuenta</Text>
-          </Layout>
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: width > 400 ? 40 : 20,
+          }}>
+          <HeaderForm
+            image={require('../../../assets/images/login.png')}
+            title="Inicie Sesión en su Cuenta"
+          />
 
           {/* Inputs */}
           <Formik
@@ -111,90 +89,58 @@ export const SignInScreen = ({navigation}: Props) => {
               touched,
               errors,
               isValid,
-            }) => {
-              return (
-                <>
-                  <Layout style={{marginTop: screenHeight * 0.02}}>
-                    <Input
-                      placeholder="Correo electrónico"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      status={
-                        errors.email && touched.email ? 'danger' : 'basic'
-                      }
-                      size="large"
-                      onChangeText={handleChange('email')}
-                      onBlur={handleBlur('email')}
-                      value={values.email}
-                      caption={ErrorFieldForm(errors, touched, 'email')}
-                      accessoryLeft={
-                        <MyIcon name="email-outline" width={20} height={20} />
-                      }
-                      disabled={isLoading}
-                      style={{marginBottom: 10}}
-                    />
+            }) => (
+              <>
+                <Layout style={{marginTop: height * 0.02}}>
+                  <Input
+                    disabled={isLoading}
+                    placeholder="Correo electrónico"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    status={errors.email && touched.email ? 'danger' : 'basic'}
+                    size="large"
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    value={values.email}
+                    caption={ErrorFieldForm(errors, touched, 'email')}
+                    accessoryLeft={
+                      <MyIcon name="email-outline" width={20} height={20} />
+                    }
+                  />
 
-                    <Input
-                      placeholder="Contraseña"
-                      autoCapitalize="none"
-                      size="large"
-                      status={
-                        errors.password && touched.password ? 'danger' : 'basic'
-                      }
-                      secureTextEntry={!secureTextEntry}
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      value={values.password}
-                      caption={ErrorFieldForm(errors, touched, 'password')}
-                      accessoryLeft={
-                        <MyIcon name="lock-outline" width={20} height={20} />
-                      }
-                      disabled={isLoading}
-                      accessoryRight={
-                        <TouchableWithoutFeedback onPress={toggleSecureEntry}>
-                          <MyIcon
-                            name={!secureTextEntry ? 'eye' : 'eye-off'}
-                            width={20}
-                            height={20}
-                          />
-                        </TouchableWithoutFeedback>
-                      }
-                      style={{marginBottom: 10}}
-                    />
-                  </Layout>
+                  <InputPassword
+                    placeholder="Contraseña"
+                    field="password"
+                    values={values}
+                    errors={errors}
+                    touched={touched}
+                    isLoading={isLoading}
+                    secureTextEntry={secureTextEntry}
+                    toggleSecureEntry={toggleSecureEntry}
+                    handleBlur={handleBlur('password')}
+                    handleChange={handleChange('password')}
+                  />
+                </Layout>
 
-                  {/* Botón de Iniciar Sesión */}
-                  <Layout
-                    style={{
-                      marginTop: screenHeight * 0.05,
-                      alignItems: 'center',
-                    }}>
-                    <Button
-                      style={{borderRadius: 50, width: '100%'}}
-                      disabled={isLoading || !isValid}
-                      onPress={() => handleSubmit()}>
-                      {isLoading ? (
-                        <LoadingIndicator />
-                      ) : (
-                        evaProps => (
-                          <Text
-                            {...evaProps}
-                            style={{fontSize: 20, color: 'white'}}
-                            category="label">
-                            Iniciar Sesión
-                          </Text>
-                        )
-                      )}
-                    </Button>
-                  </Layout>
-                </>
-              );
-            }}
+                {/* Botón de Iniciar Sesión */}
+                <Layout
+                  style={{
+                    marginTop: height * 0.04,
+                    alignItems: 'center',
+                  }}>
+                  <ButtonLoading
+                    isLoading={isLoading}
+                    isValid={isValid}
+                    label="Iniciar Sesión"
+                    handleSubmit={handleSubmit}
+                  />
+                </Layout>
+              </>
+            )}
           </Formik>
 
           {/* Enlace para recuperar contraseña */}
-          <Layout
-            style={{marginTop: screenHeight * 0.02, alignItems: 'center'}}>
+          <Layout style={{marginTop: height * 0.02, alignItems: 'center'}}>
             <Text
               status="primary"
               category="s1"
@@ -206,7 +152,7 @@ export const SignInScreen = ({navigation}: Props) => {
           {/* Enlace para crear cuenta */}
           <Layout
             style={{
-              marginVertical: screenHeight * 0.02,
+              marginVertical: height * 0.03,
               flexDirection: 'row',
               justifyContent: 'center',
             }}>
@@ -222,19 +168,12 @@ export const SignInScreen = ({navigation}: Props) => {
       </Layout>
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModal}
+        modalInfo={modalInfo}
+      />
     </>
   );
 };

@@ -1,3 +1,5 @@
+import React from 'react';
+import {useWindowDimensions} from 'react-native';
 import {
   Button,
   Card,
@@ -6,8 +8,6 @@ import {
   Text,
   useTheme,
 } from '@ui-kitten/components';
-import React from 'react';
-import {useWindowDimensions} from 'react-native';
 
 interface Props {
   onCancel: () => void;

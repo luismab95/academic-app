@@ -1,51 +1,30 @@
 import {useState} from 'react';
-import {Dimensions, Image} from 'react-native';
+import {Image, useWindowDimensions, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import DeviceInfo from 'react-native-device-info';
 import {StackScreenProps} from '@react-navigation/stack';
-import {Button, Layout, Modal, Text} from '@ui-kitten/components';
+import {Button, Layout, Text} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
-import {LoadingIndicator, Message, PropsMessageModal} from '../../components';
-import {servicesContainer} from '../../providers/service.provider';
-import {Device} from '../../../domian';
-import {errorStore} from '../../../shared';
+import {LoadingIndicator, ModalApp, PropsMessageModal} from '../../components';
+import {createDevice, errorStore, ModalHook} from '../../../shared';
 
 interface Props extends StackScreenProps<RootStackParams, 'LandingScreen'> {}
 
 export const LandingScreen = ({navigation}: Props) => {
-  const screenHeight = Dimensions.get('window').height;
-
+  const {width, height} = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
-
-  const onCloseModal = () => {
-    setVisibleModal(false);
-  };
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
   const onCreateDevice = async () => {
     setIsLoading(true);
-    const device = {
-      name: await DeviceInfo.getDeviceName(),
-      serie: await DeviceInfo.getUniqueId(),
-      type: DeviceInfo.getModel(),
-      operationSystem: DeviceInfo.getSystemName(),
-      version: DeviceInfo.getSystemVersion(),
-    } as Device;
 
-    const response = await servicesContainer.device.createDevice(device);
+    const response = await createDevice();
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
@@ -57,37 +36,36 @@ export const LandingScreen = ({navigation}: Props) => {
     <>
       <Layout style={{flex: 1}}>
         <ScrollView
-          contentContainerStyle={{flexGrow: 1, paddingHorizontal: 40}}>
-          {/* Space */}
-          <Layout
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 40,
-            }}>
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: width > 400 ? 40 : 20,
+          }}>
+          {/* Imagen */}
+          <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <Image
-              style={{width: '100%', height: 300, resizeMode: 'contain'}}
+              style={{width: '100%', height: 300}}
               source={require('../../../assets/images/landing.png')}
               resizeMode="contain"
             />
-          </Layout>
+          </View>
 
           {/* Inputs */}
-          <Layout style={{marginTop: screenHeight * 0.01}}>
+          <Layout style={{marginTop: height * 0.04}}>
             <Text
-              category="s1"
-              style={{textAlign: 'center', fontSize: 36, marginBottom: 30}}>
+              category="h1"
+              style={{
+                textAlign: 'center',
+                marginBottom: 30,
+                fontWeight: 'light',
+              }}>
               ¡Obtén tus certificados de calificaciones de forma segura ahora
               mismo!
             </Text>
           </Layout>
 
-          {/* Space */}
-          <Layout style={{height: screenHeight * 0.05}} />
-
           {/* Button */}
-          <Layout style={{alignItems: 'center'}}>
+          <Layout style={{alignItems: 'center', marginVertical: height * 0.04}}>
             <Button
               style={{borderRadius: 50, width: '100%'}}
               disabled={isLoading}
@@ -109,26 +87,16 @@ export const LandingScreen = ({navigation}: Props) => {
               )}
             </Button>
           </Layout>
-
-          {/* Space */}
-          <Layout style={{marginVertical: screenHeight * 0.05}} />
         </ScrollView>
       </Layout>
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModal}
+        modalInfo={modalInfo}
+      />
     </>
   );
 };

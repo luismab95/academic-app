@@ -1,30 +1,18 @@
 import {useEffect, useState} from 'react';
-import {useWindowDimensions} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import {StackScreenProps} from '@react-navigation/stack';
-import {Layout, Modal, Spinner} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {servicesContainer} from '../../providers/service.provider';
-import {Message, PropsMessageModal} from '../../components';
-import {errorStore, generateKeys} from '../../../shared';
+import {LoadingView, ModalApp, PropsMessageModal} from '../../components';
+import {createDevice, errorStore, generateKeys} from '../../../shared';
 import {StorageAdapter} from '../../../infrastructure/adapters/storage';
-import {Device} from '../../../domian';
+import {ModalHook} from '../../../shared/hooks/ModalHook';
 
 interface Props extends StackScreenProps<RootStackParams, 'LoadingScreen'> {}
 
 export const LoadingScreen = ({navigation}: Props) => {
-  const {width, height} = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(true);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
-
-  const onCloseModal = () => {
-    setVisibleModal(false);
-  };
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
   useEffect(() => {
     const getDevice = async () => {
@@ -33,12 +21,11 @@ export const LoadingScreen = ({navigation}: Props) => {
       const response = await servicesContainer.device.getDeviceBySerie(serie);
 
       if (response === null) {
-        setModalInfo({
+        loadModalInfo({
           title: 'Error',
           content: errorStore.getState().message,
           type: 'danger',
         } as PropsMessageModal);
-        setVisibleModal(true);
         setIsLoading(false);
         return;
       }
@@ -64,23 +51,15 @@ export const LoadingScreen = ({navigation}: Props) => {
 
   const onCreateDevice = async () => {
     setIsLoading(true);
-    const device = {
-      name: await DeviceInfo.getDeviceName(),
-      serie: await DeviceInfo.getUniqueId(),
-      type: DeviceInfo.getModel(),
-      operationSystem: DeviceInfo.getSystemName(),
-      version: DeviceInfo.getSystemVersion(),
-    } as Device;
 
-    const response = await servicesContainer.device.createDevice(device);
+    const response = await createDevice();
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
@@ -89,31 +68,15 @@ export const LoadingScreen = ({navigation}: Props) => {
 
   return (
     <>
-      <Layout
-        style={{
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width,
-          height,
-        }}>
-        {isLoading && <Spinner size="giant" />}
-      </Layout>
+      {isLoading && <LoadingView />}
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModal}
+        modalInfo={modalInfo}
+      />
     </>
   );
 };

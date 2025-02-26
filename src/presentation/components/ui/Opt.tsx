@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {StyleSheet} from 'react-native';
 import OTPTextInput from 'react-native-otp-textinput';
 import {appThemeNavigation} from '../../theme/theme';
 
@@ -20,7 +20,6 @@ export const Opt = ({
 }: OptProps) => {
   const theme = appThemeNavigation();
   const otpInput = useRef<OTPTextInput | null>(null);
-  const [isLoadingOtp, setIsLoadingOtp] = useState(false);
 
   const handleChange = (text: string) => {
     if (text.length === length && onComplete) {
@@ -32,9 +31,8 @@ export const Opt = ({
   };
 
   useEffect(() => {
-    setIsLoadingOtp(isLoading);
     otpInput.current?.inputs.forEach(input => {
-      input.setNativeProps({editable: !isLoadingOtp});
+      input.setNativeProps({editable: !isLoading});
     });
   }, [isLoading]);
 
@@ -43,24 +41,16 @@ export const Opt = ({
   }, [resetOtp]);
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-        paddingHorizontal: 20,
-      }}>
-      <OTPTextInput
-        ref={otpInput}
-        autoFocus={true}
-        inputCellLength={1}
-        inputCount={length}
-        textInputStyle={styles.roundedTextInput}
-        handleTextChange={text => handleChange(text)}
-        tintColor={theme.colors.primary}
-        keyboardType="default"
-      />
-    </View>
+    <OTPTextInput
+      ref={otpInput}
+      autoFocus={true}
+      inputCellLength={1}
+      inputCount={length}
+      textInputStyle={styles.roundedTextInput}
+      handleTextChange={text => handleChange(text)}
+      tintColor={theme.colors.primary}
+      keyboardType="default"
+    />
   );
 };
 

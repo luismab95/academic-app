@@ -1,26 +1,27 @@
 import {useState} from 'react';
-import {Layout, Modal} from '@ui-kitten/components';
+import {useWindowDimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
+import {Layout} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {
   ForgotPasswordForm,
-  Message,
+  ModalApp,
   PropsMessageModal,
   ResetPasswordForm,
   TopNavigationApp,
   VerifyOtp,
 } from '../../components';
-import {servicesContainer} from '../../providers/service.provider';
-import {authStore, errorStore} from '../../../shared';
 import {otpMethod} from '../../../domian';
-import {Dimensions} from 'react-native';
+import {servicesContainer} from '../../providers/service.provider';
+import {authStore, errorStore, ModalHook} from '../../../shared';
 
 interface Props extends StackScreenProps<RootStackParams, 'SecurityScreen'> {}
 
 export const SecurityScreen = ({navigation}: Props) => {
-  const screenWidth = Dimensions.get('window').width;
+  const {id} = authStore.getState().getPayloadToken!();
 
+  const {width} = useWindowDimensions();
   const [verifyOtp, setVerifyOtp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [otpInfo, setOtpInfo] = useState<{
@@ -34,14 +35,7 @@ export const SecurityScreen = ({navigation}: Props) => {
   });
   const [message, setMessage] = useState<string>('');
   const [forgotPassword, setForgotPassword] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
-
-  const {id} = authStore.getState().getPayloadToken!();
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
   const onVerifyOtp = async (otp: string) => {
     setIsLoading(true);
@@ -53,12 +47,11 @@ export const SecurityScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
@@ -77,12 +70,11 @@ export const SecurityScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
@@ -90,9 +82,9 @@ export const SecurityScreen = ({navigation}: Props) => {
     setIsLoading(false);
   };
 
-  const onCloseModal = () => {
+  const onCloseModalScreen = () => {
     if (modalInfo.type === 'success') navigation.goBack();
-    setVisibleModal(false);
+    onCloseModal();
   };
 
   const onForgotPassword = async (contact: string, method: otpMethod) => {
@@ -104,12 +96,11 @@ export const SecurityScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
@@ -135,37 +126,31 @@ export const SecurityScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
 
-    setModalInfo({
+    loadModalInfo({
       title: 'Exito',
       content: response.data,
       type: 'success',
     } as PropsMessageModal);
-    setVisibleModal(true);
     setIsLoading(false);
   };
 
-  let formToRender;
-
-  if (forgotPassword) {
-    if (verifyOtp) {
-      formToRender = (
+  const renderForm = () => {
+    if (forgotPassword) {
+      return verifyOtp ? (
         <ResetPasswordForm
           isLoading={isLoading}
           onResetPassword={onResetPassword}
         />
-      );
-    } else {
-      formToRender = (
+      ) : (
         <VerifyOtp
           message={message}
           isLoading={isLoading}
@@ -174,14 +159,14 @@ export const SecurityScreen = ({navigation}: Props) => {
         />
       );
     }
-  } else {
-    formToRender = (
+
+    return (
       <ForgotPasswordForm
         isLoading={isLoading}
         onForgotPassword={onForgotPassword}
       />
     );
-  }
+  };
 
   return (
     <Layout style={{flex: 1}}>
@@ -190,26 +175,18 @@ export const SecurityScreen = ({navigation}: Props) => {
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: 'center',
-          paddingHorizontal: screenWidth > 400 ? 40 : 20,
-        }}
-        keyboardShouldPersistTaps="handled">
-        {formToRender}
+          paddingHorizontal: width > 400 ? 40 : 20,
+        }}>
+        {renderForm()}
       </ScrollView>
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModalScreen}
+        modalInfo={modalInfo}
+      />
     </Layout>
   );
 };

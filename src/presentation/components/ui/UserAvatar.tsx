@@ -1,5 +1,5 @@
-import {Layout, Text} from '@ui-kitten/components';
 import {useWindowDimensions} from 'react-native';
+import {Layout, Text} from '@ui-kitten/components';
 import {appThemeNavigation} from '../../theme/theme';
 import {authStore} from '../../../shared/store/auth.store';
 

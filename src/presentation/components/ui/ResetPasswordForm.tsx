@@ -1,10 +1,9 @@
 import {useState} from 'react';
-import {Dimensions, Image} from 'react-native';
-import {Button, Input, Layout, Text} from '@ui-kitten/components';
-import {TouchableWithoutFeedback} from '@ui-kitten/components/devsupport';
-import {ErrorFieldForm, LoadingIndicator, MyIcon} from './../';
-import {ResetPasswordSchema} from '../../../shared';
+import {Image, useWindowDimensions, View} from 'react-native';
+import {Button, Layout, Text} from '@ui-kitten/components';
 import {Formik} from 'formik';
+import {InputPassword, LoadingIndicator} from './../';
+import {ResetPasswordSchema} from '../../../shared';
 
 interface Props {
   isLoading: boolean;
@@ -12,7 +11,7 @@ interface Props {
 }
 
 export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
-  const screenHeight = Dimensions.get('window').height;
+  const {height} = useWindowDimensions();
 
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [secureTextEntryRecover, setSecureTextEntryRecover] = useState(false);
@@ -27,19 +26,24 @@ export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
 
   return (
     <>
-      <Layout
+      <View
         style={{
-          flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          paddingHorizontal: 40,
         }}>
         <Image
-          style={{width: '100%', height: 300, resizeMode: 'contain'}}
+          style={{width: '100%', height: 300}}
           source={require('../../../assets/images/reset-password.png')}
+          resizeMode="contain"
         />
-      </Layout>
+      </View>
 
+      <Layout
+        style={{
+          marginVertical: height * 0.02,
+        }}>
+        <Text category="h1">Crear Tu Nueva Contraseña</Text>
+      </Layout>
       {/* INPUTS */}
       <Formik
         initialValues={{password: '', confirmPassword: ''} as any}
@@ -54,105 +58,63 @@ export const ResetPasswordForm = ({isLoading, onResetPassword}: Props) => {
           touched,
           errors,
           isValid,
-        }) => {
-          return (
-            <>
-              <Layout
-                style={{
-                  height: screenHeight * 0.3,
-                  marginVertical: screenHeight * 0.01,
-                }}>
-                <Text
-                  category="s1"
-                  style={{textAlign: 'left', fontSize: 20, marginBottom: 30}}>
-                  Crear Tu Nueva Contraseña
-                </Text>
-                <Input
-                  placeholder="Nueva contraseña"
-                  autoCapitalize="none"
-                  secureTextEntry={!secureTextEntry}
-                  status={errors.password && touched.email ? 'danger' : 'basic'}
-                  size="large"
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={values.password}
-                  caption={ErrorFieldForm(errors, touched, 'password')}
-                  accessoryLeft={
-                    <MyIcon name="lock-outline" width={20} height={20} />
-                  }
-                  accessoryRight={
-                    <TouchableWithoutFeedback onPress={toggleSecureEntry}>
-                      <MyIcon
-                        name={!secureTextEntry ? 'eye' : 'eye-off'}
-                        width={20}
-                        height={20}
-                      />
-                    </TouchableWithoutFeedback>
-                  }
-                  disabled={isLoading}
-                  style={{marginBottom: 10}}
-                />
-                <Layout style={{height: 10}} />
+        }) => (
+          <>
+            <Layout style={{marginTop: height * 0.02}}>
+              <InputPassword
+                secureTextEntry={secureTextEntry}
+                errors={errors}
+                touched={touched}
+                values={values}
+                isLoading={isLoading}
+                placeholder="Nueva contraseña"
+                field="password"
+                toggleSecureEntry={toggleSecureEntry}
+                handleChange={handleChange('password')}
+                handleBlur={handleBlur('password')}
+              />
 
-                <Input
-                  placeholder="Repite la contraseña"
-                  autoCapitalize="none"
-                  secureTextEntry={!secureTextEntryRecover}
-                  status={
-                    errors.confirmPassword && touched.confirmPassword
-                      ? 'danger'
-                      : 'basic'
-                  }
-                  size="large"
-                  onChangeText={handleChange('confirmPassword')}
-                  onBlur={handleBlur('confirmPassword')}
-                  value={values.confirmPassword}
-                  caption={ErrorFieldForm(errors, touched, 'confirmPassword')}
-                  accessoryLeft={
-                    <MyIcon name="lock-outline" width={20} height={20} />
-                  }
-                  accessoryRight={
-                    <TouchableWithoutFeedback
-                      onPress={toggleSecureEntryRecover}>
-                      <MyIcon
-                        name={!secureTextEntryRecover ? 'eye' : 'eye-off'}
-                        width={20}
-                        height={20}
-                      />
-                    </TouchableWithoutFeedback>
-                  }
-                  disabled={isLoading}
-                  style={{marginBottom: 10}}
-                />
-              </Layout>
+              <InputPassword
+                secureTextEntry={secureTextEntryRecover}
+                errors={errors}
+                touched={touched}
+                values={values}
+                isLoading={isLoading}
+                placeholder="Repite la contraseña"
+                field="confirmPassword"
+                toggleSecureEntry={toggleSecureEntryRecover}
+                handleChange={handleChange('confirmPassword')}
+                handleBlur={handleBlur('confirmPassword')}
+              />
+            </Layout>
 
-              {/* Button */}
-              <Layout style={{marginVertical: screenHeight * 0.01}}>
-                <Button
-                  style={{borderRadius: 40, width: '100%'}}
-                  disabled={isLoading || !isValid}
-                  onPress={() => handleSubmit()}>
-                  {isLoading ? (
-                    <LoadingIndicator />
-                  ) : (
-                    evaProps => (
-                      <Text
-                        {...evaProps}
-                        style={{fontSize: 20, color: 'white'}}
-                        category="label">
-                        Guardar
-                      </Text>
-                    )
-                  )}
-                </Button>
-              </Layout>
-            </>
-          );
-        }}
+            {/* Button */}
+            <Layout
+              style={{
+                marginTop: height * 0.04,
+                alignItems: 'center',
+              }}>
+              <Button
+                style={{borderRadius: 50, width: '100%'}}
+                disabled={isLoading || !isValid}
+                onPress={() => handleSubmit()}>
+                {isLoading ? (
+                  <LoadingIndicator />
+                ) : (
+                  evaProps => (
+                    <Text
+                      {...evaProps}
+                      style={{fontSize: 20, color: 'white'}}
+                      category="label">
+                      Guardar
+                    </Text>
+                  )
+                )}
+              </Button>
+            </Layout>
+          </>
+        )}
       </Formik>
-
-      {/* Space */}
-      <Layout style={{height: 40}} />
     </>
   );
 };

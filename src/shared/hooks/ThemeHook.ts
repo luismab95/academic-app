@@ -1,12 +1,17 @@
 import {useEffect, useState} from 'react';
 import {StorageAdapter} from '../../infrastructure/adapters/storage';
 
-export const ThemeHook = () => {
-  const [theme, setTheme] = useState('light');
+interface Props {
+  theme: 'light' | 'dark';
+  toggleTheme: () => Promise<void>;
+}
+
+export const ThemeHook = (): Props => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     async function getTheme() {
-      const theme = await StorageAdapter.getItem('theme');
+      const theme = (await StorageAdapter.getItem('theme')) as 'light' | 'dark';
       if (theme !== null) {
         setTheme(theme);
       }
@@ -23,8 +28,5 @@ export const ThemeHook = () => {
   return {
     theme,
     toggleTheme,
-  } as {
-    theme: 'light' | 'dark';
-    toggleTheme: () => Promise<void>;
   };
 };

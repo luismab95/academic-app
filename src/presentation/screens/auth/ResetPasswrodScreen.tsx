@@ -1,38 +1,32 @@
 import {useCallback, useState} from 'react';
+import {useWindowDimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
-import {Layout, Modal} from '@ui-kitten/components';
+import {Layout} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {
-  Message,
+  ModalApp,
   PropsMessageModal,
   ResetPasswordForm,
   TopNavigationApp,
 } from '../../components';
 import {servicesContainer} from '../../providers/service.provider';
-import {errorStore} from '../../../shared';
-import {Dimensions} from 'react-native';
+import {errorStore, ModalHook} from '../../../shared';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'ResetPasswordScreen'> {}
 
 export const ResetPasswordScreen = ({navigation, route}: Props) => {
-  const screenWidth = Dimensions.get('window').width;
-
   const {method, otp, userId} = route.params;
 
+  const {width} = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
-  const onCloseModal = () => {
+  const onCloseModalScreen = () => {
     if (modalInfo.type === 'success') navigation.navigate('SignInScreen');
-    setVisibleModal(false);
+    onCloseModal();
   };
 
   const onResetPassword = async (password: string) => {
@@ -47,22 +41,20 @@ export const ResetPasswordScreen = ({navigation, route}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
 
-    setModalInfo({
+    loadModalInfo({
       title: 'Exito',
       content: response.data,
       type: 'success',
     } as PropsMessageModal);
-    setVisibleModal(true);
   };
 
   useFocusEffect(
@@ -79,9 +71,8 @@ export const ResetPasswordScreen = ({navigation, route}: Props) => {
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'center',
-            paddingHorizontal: screenWidth > 400 ? 40 : 20,
-          }}
-          keyboardShouldPersistTaps="handled">
+            paddingHorizontal: width > 400 ? 40 : 20,
+          }}>
           <ResetPasswordForm
             isLoading={isLoading}
             onResetPassword={onResetPassword}
@@ -90,19 +81,12 @@ export const ResetPasswordScreen = ({navigation, route}: Props) => {
       </Layout>
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModalScreen}
+        modalInfo={modalInfo}
+      />
     </>
   );
 };

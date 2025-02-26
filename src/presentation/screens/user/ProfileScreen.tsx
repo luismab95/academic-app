@@ -1,5 +1,5 @@
 import {useContext, useState} from 'react';
-import {Divider, Layout, Modal, useTheme} from '@ui-kitten/components';
+import {Divider, Layout, useTheme} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {StackScreenProps} from '@react-navigation/stack';
 import {ThemeContext} from '../../theme/theme';
@@ -8,7 +8,7 @@ import {
   ListElementsProps,
   TopNavigationApp,
   UserAvatar,
-  SignOut,
+  ModalApp,
 } from '../../components';
 import {servicesContainer} from '../../providers/service.provider';
 import {authStore} from '../../../shared';
@@ -90,14 +90,14 @@ export const ProfileScreen = ({navigation}: Props) => {
           }
         />
       </Layout>
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCancel}
-        shouldUseContainer={false}
-        animationType="slide"
-        visible={visible}>
-        <SignOut onCancel={onCancel} onLogout={onLogout} />
-      </Modal>
+
+      {/* MODAL */}
+      <ModalApp
+        content="sign-out"
+        visibleModal={visible}
+        onCloseModal={onCancel}
+        onContinue={onLogout}
+      />
     </>
   );
 };

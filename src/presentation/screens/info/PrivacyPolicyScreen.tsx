@@ -3,7 +3,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {Layout, Text} from '@ui-kitten/components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {TopNavigationApp} from '../../components/ui/TopNavigation';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, useWindowDimensions, View} from 'react-native';
 import {useState} from 'react';
 
 interface Props
@@ -11,13 +11,18 @@ interface Props
 
 export const PrivacyPolicyScreen = ({navigation}: Props) => {
   const [date] = useState(new Date());
+  const {width} = useWindowDimensions();
 
   return (
     <>
       <TopNavigationApp title="Pólitica de Privacidad" />
       <Layout style={{flex: 1}}>
-        <ScrollView style={{marginHorizontal: 40}}>
-          <Layout style={{marginTop: 10}}></Layout>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: width > 400 ? 40 : 20,
+          }}>
           <Text style={styles.date}>
             Última actualización: {date.toLocaleDateString()}
           </Text>

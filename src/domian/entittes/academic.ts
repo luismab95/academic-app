@@ -9,3 +9,11 @@ export interface AcademicRecord {
   career: string;
   university: string;
 }
+
+export interface Academic {
+  id: number;
+  name: string;
+  grade: string;
+  year: string;
+  identification: string;
+}

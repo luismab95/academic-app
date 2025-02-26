@@ -8,7 +8,7 @@ export const appThemeNavigation = () => {
   return {
     dark: theme === 'dark',
     colors: {...navigationTheme.colors},
-  };
+  } as ReactNavigation.Theme;
 };
 
 export const ThemeContext = createContext({

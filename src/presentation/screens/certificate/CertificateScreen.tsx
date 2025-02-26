@@ -1,41 +1,39 @@
 import {useEffect, useState} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import Pdf from 'react-native-pdf';
 import {StackScreenProps} from '@react-navigation/stack';
-import {Button, Layout, Modal, Text} from '@ui-kitten/components';
+import {Button, Card, Layout, Text} from '@ui-kitten/components';
 import {
   LoadingIndicator,
-  Message,
+  LoadingView,
+  ModalApp,
   PropsMessageModal,
   TopNavigationApp,
 } from '../../components';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {servicesContainer} from '../../providers/service.provider';
-import {errorStore} from '../../../shared';
+import {errorStore, ModalHook} from '../../../shared';
 
 interface Props
   extends StackScreenProps<RootStackParams, 'CertificateScreen'> {}
 
 export const CertificateScreen = ({navigation, route}: Props) => {
   const {identification, studentId} = route.params;
+  const {height, width} = useWindowDimensions();
+
   const [source, setSource] = useState({
     uri: '',
     cache: true,
   });
   const [isGetAcademicRecord, setIsGetAcademicRecord] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    title: 'Aviso',
-    content: '',
-    type: 'success',
-  } as PropsMessageModal);
+  const {visibleModal, modalInfo, loadModalInfo, onCloseModal} = ModalHook();
 
-  const onCloseModal = () => {
+  const onCloseModalScreen = () => {
     if (modalInfo.type === 'success') {
       navigation.goBack();
     }
-    setVisibleModal(false);
+    onCloseModal();
   };
 
   const downloadPDF = async () => {
@@ -47,22 +45,20 @@ export const CertificateScreen = ({navigation, route}: Props) => {
     );
 
     if (response === null) {
-      setModalInfo({
+      loadModalInfo({
         title: 'Error',
         content: errorStore.getState().message,
         type: 'danger',
       } as PropsMessageModal);
-      setVisibleModal(true);
       setIsLoading(false);
       return;
     }
 
-    setModalInfo({
+    loadModalInfo({
       title: 'Exito',
       content: response.data,
       type: 'success',
     } as PropsMessageModal);
-    setVisibleModal(true);
     setIsLoading(false);
   };
 
@@ -75,12 +71,11 @@ export const CertificateScreen = ({navigation, route}: Props) => {
       );
 
       if (result === null) {
-        setModalInfo({
+        loadModalInfo({
           title: 'Error',
           content: errorStore.getState().message,
           type: 'danger',
         } as PropsMessageModal);
-        setVisibleModal(true);
         setIsGetAcademicRecord(false);
         return;
       }
@@ -99,23 +94,29 @@ export const CertificateScreen = ({navigation, route}: Props) => {
     <>
       <TopNavigationApp title="Obtener Certificado" />
       {isGetAcademicRecord ? (
-        <Layout
-          style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <LoadingIndicator />
-        </Layout>
+        <LoadingView />
       ) : (
-        <>
-          <Layout style={{flex: 1}}>
-            <Layout style={{marginTop: 20}}></Layout>
-            <Layout style={styles.container}>
-              <Pdf source={source} style={styles.pdf} />
-            </Layout>
+        <Layout style={{flex: 1, marginTop: height * 0}}>
+          {/* PDF */}
+          <Layout
+            style={{
+              width,
+              height,
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}>
+            <Pdf
+              source={source}
+              style={{width, height, backgroundColor: 'transparent'}}
+            />
           </Layout>
-          <View style={styles.cardContainer}>
+
+          {/* BOTON */}
+          <Card style={{position: 'absolute', bottom: 0, padding: 20, width}}>
             <Button
               disabled={isLoading}
               onPress={() => downloadPDF()}
-              style={styles.button}>
+              style={{borderRadius: 50, width: '100%'}}>
               {isLoading ? (
                 <LoadingIndicator />
               ) : (
@@ -124,53 +125,22 @@ export const CertificateScreen = ({navigation, route}: Props) => {
                     {...evaProps}
                     style={{fontSize: 20, color: 'white'}}
                     category="label">
-                    Obtener
+                    Solicitar
                   </Text>
                 )
               )}
             </Button>
-          </View>
-        </>
+          </Card>
+        </Layout>
       )}
 
       {/* MODAL */}
-      <Modal
-        backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
-        onBackdropPress={onCloseModal}
-        visible={visibleModal}
-        shouldUseContainer={false}
-        animationType="slide">
-        <Message
-          title={modalInfo.title}
-          content={modalInfo.content}
-          type={modalInfo.type}
-          onContinue={onCloseModal}
-        />
-      </Modal>
+      <ModalApp
+        content="message"
+        visibleModal={visibleModal}
+        onCloseModal={onCloseModalScreen}
+        modalInfo={modalInfo}
+      />
     </>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'transparent',
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  pdf: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height / 1.4,
-    // backgroundColor: 'transparent',
-  },
-  cardContainer: {
-    position: 'absolute',
-    bottom: 20,
-    padding: 20,
-    width: Dimensions.get('window').width,
-  },
-  button: {
-    borderRadius: 50,
-    width: '100%',
-  },
-});

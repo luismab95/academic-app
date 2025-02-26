@@ -1,14 +1,9 @@
 import {Button, Card, Layout, Text} from '@ui-kitten/components';
 import {MyIcon} from './Icon';
+import {Academic} from '../../../domian';
 
 interface Props {
-  data: {
-    id: number;
-    name: string;
-    grade: string;
-    year: string;
-    identification: string;
-  };
+  data: Academic;
   onPress: (identification: string, studentId: number) => void;
 }
 
