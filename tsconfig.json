@@ -2,7 +2,7 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "typeRoots": [
-      "./src/shared/types"
+      "./src/Shared/Types"
     ]
   }
 }
