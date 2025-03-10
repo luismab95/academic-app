@@ -206,7 +206,7 @@ export const SettingScreen = () => {
                         placeholder="Identificación"
                         value={values.identification}
                         maxLength={10}
-                        readOnly={isLoadingForm}
+                        readOnly={true}
                         onBlur={handleBlur('identification')}
                         onChangeText={handleChange('identification')}
                       />

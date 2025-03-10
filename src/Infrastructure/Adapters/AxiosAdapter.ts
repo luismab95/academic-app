@@ -7,6 +7,9 @@ import {AuthSession} from '../../Domian';
 
 const apiURL = API_URL;
 
+console.info('API_URL', apiURL);
+
+
 const axiosApi = axios.create({
   baseURL: apiURL,
   headers: {
