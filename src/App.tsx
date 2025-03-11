@@ -66,7 +66,8 @@ export default function App(): React.JSX.Element {
       await StorageAdapter.setItem('publicKey-server', response.data.publicKey);
       setLoading(false);
     };
-    const timer = setTimeout(() => {
+   
+    setTimeout(() => {
       getPublicKey();
     }, 2000);
   }, []);

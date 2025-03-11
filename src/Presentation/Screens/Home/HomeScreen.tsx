@@ -2,7 +2,6 @@ import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Swiper from 'react-native-swiper';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {AcademicRecord} from '../../../Domian';
 import {RootStackParams} from '../../Navigation';
 import {AnimatedLoading, Header} from '../../Components';
 import {bannerData} from '../../Utils';

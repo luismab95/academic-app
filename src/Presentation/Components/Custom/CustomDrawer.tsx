@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
@@ -30,7 +30,7 @@ export const CustomDrawer = (props: DrawerContentComponentProps) => {
         <View style={CustomDrawerStyles.textContainer}>
           <Text
             numberOfLines={1}
-            ellipsizeMode='tail'
+            ellipsizeMode="tail"
             style={[
               CustomDrawerStyles.headerText,
               {fontFamily: 'Raleway-Bold'},

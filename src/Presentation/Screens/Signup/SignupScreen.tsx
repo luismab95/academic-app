@@ -32,14 +32,14 @@ interface Props {
 }
 
 export const SignupScreen = ({navigation}: Props) => {
-  const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [isButtonSpinner, setButtonSpinner] = useState<boolean>(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [isButtonSpinner, setIsButtonSpinner] = useState<boolean>(false);
 
   const handleRegister = async (
     values: Partial<User>,
     resetForm: () => void,
   ) => {
-    setButtonSpinner(true);
+    setIsButtonSpinner(true);
     const response = await servicesContainer.auth.signUp(values as User);
 
     if (response === null) {
@@ -50,7 +50,7 @@ export const SignupScreen = ({navigation}: Props) => {
         animationType: 'zoom-in',
         dangerColor: 'transparent',
       });
-      setButtonSpinner(false);
+      setIsButtonSpinner(false);
       return;
     }
 
@@ -63,7 +63,7 @@ export const SignupScreen = ({navigation}: Props) => {
       onClose: () => navigation.navigate('Login'),
     });
     resetForm();
-    setButtonSpinner(false);
+    setIsButtonSpinner(false);
   };
 
   return (
@@ -220,7 +220,7 @@ export const SignupScreen = ({navigation}: Props) => {
                   />
                   <TouchableOpacity
                     style={RegisterScreenStyles.visibleIcon}
-                    onPress={() => setPasswordVisible(!isPasswordVisible)}>
+                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
                     {isPasswordVisible ? (
                       <FontAwesomeIcon
                         icon={faEyeSlash}

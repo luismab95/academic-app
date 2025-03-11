@@ -9,15 +9,15 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {Toast} from 'react-native-toast-notifications';
 import {NavigationProp} from '@react-navigation/native';
 import {RootStackParams} from '../../Navigation';
-import {ForgotPasswordStyles} from '../../Styles';
+import {ForgotPasswordStyles, SigninScreenStyles} from '../../Styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faEnvelope} from '@fortawesome/free-regular-svg-icons';
-import {AlertError, CustomErrorInput} from '../../Components';
 import {Formik} from 'formik';
+import {AlertError, CustomErrorInput} from '../../Components';
 import {ForgotPasswordSchema, servicesContainer} from '../../../Shared';
-import {Toast} from 'react-native-toast-notifications';
 
 interface Props {
   navigation: NavigationProp<RootStackParams, 'ForgotPassword'>;
@@ -25,7 +25,7 @@ interface Props {
 export const ForgotPasswordScreen = ({navigation}: Props) => {
   const [isButtonSpinner, setIsButtonSpinner] = useState<boolean>(false);
 
-  const handleSignIn = async (
+  const handleForgotPassword = async (
     values: {email: string},
     resetForm: () => void,
   ) => {
@@ -61,29 +61,31 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
       style={ForgotPasswordStyles.container}>
       <ScrollView>
         <Image
-          style={ForgotPasswordStyles.image}
+          style={SigninScreenStyles.signInImage}
           source={require('./../../../../assets/Images/Forgot_password/forgot_password.png')}
         />
         <Text
           style={[
-            ForgotPasswordStyles.welcomeText,
+            SigninScreenStyles.welcomeText,
             {fontFamily: 'Raleway-Bold'},
           ]}>
           ¡Olvidaste tu contraseña!
         </Text>
         <Text
           style={[
-            ForgotPasswordStyles.learningText,
+            SigninScreenStyles.learningText,
             {fontFamily: 'Nunito-Regular'},
           ]}>
           Ingresa el correo electrónico asociado a tu cuenta
         </Text>
-        <View style={ForgotPasswordStyles.inputContainer}>
+        <View style={SigninScreenStyles.inputContainer}>
           <Formik
             initialValues={{email: ''}}
             validationSchema={ForgotPasswordSchema}
             validateOnMount
-            onSubmit={(values, {resetForm}) => handleSignIn(values, resetForm)}>
+            onSubmit={(values, {resetForm}) =>
+              handleForgotPassword(values, resetForm)
+            }>
             {({
               handleChange,
               handleBlur,
@@ -97,7 +99,7 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
                 <View>
                   <TextInput
                     style={[
-                      ForgotPasswordStyles.input,
+                      SigninScreenStyles.input,
                       {fontFamily: 'Nunito-Regular'},
                     ]}
                     placeholder="Correo electrónico"
@@ -108,7 +110,7 @@ export const ForgotPasswordScreen = ({navigation}: Props) => {
                     onChangeText={handleChange('email')}
                   />
                   <FontAwesomeIcon
-                    style={ForgotPasswordStyles.icon}
+                    style={SigninScreenStyles.icon}
                     icon={faEnvelope}
                     size={20}
                     color={'#A1A1A1'}

@@ -68,7 +68,6 @@ const AuthStack = () => {
         animationType: 'zoom-in',
         dangerColor: 'transparent',
       });
-      return;
     }
   };
 
@@ -108,7 +107,7 @@ const AuthStack = () => {
             component={VerifyForgotPasswordMfaScreen}
             options={{headerShown: false}}
           />
-           <Stack.Screen
+          <Stack.Screen
             name="ResetPassword"
             component={ResetPasswordScreen}
             options={{headerShown: false}}

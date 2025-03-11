@@ -7,3 +7,4 @@ export * from './Store/ErrorStore';
 export * from './Validators/AuthValidator';
 export * from './Validators/UserValidator';
 export * from './Hooks/AcademicHook';
+export * from './Hooks/UpdatePasswordHook';

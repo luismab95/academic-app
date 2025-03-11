@@ -21,8 +21,10 @@ export const generateKeys = async () => {
       },
     });
 
-    await StorageAdapter.setItem('publicKey', publicKey?.toString()!);
-    await StorageAdapter.setItem('privateKey', privateKey?.toString()!);
+    if (!publicKey || !privateKey) throw new Error('Error generating keys');
+
+    await StorageAdapter.setItem('publicKey', publicKey as unknown as string);
+    await StorageAdapter.setItem('privateKey', privateKey as unknown as string);
 
     console.log('Keys generated successfully!');
   } catch (error) {

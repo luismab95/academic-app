@@ -1,12 +1,29 @@
 import React from 'react';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import {
+  createDrawerNavigator,
+  DrawerContentComponentProps,
+} from '@react-navigation/drawer';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faHome, faFileShield} from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faFileShield,
+  IconDefinition,
+} from '@fortawesome/free-solid-svg-icons';
 import {BottomTabNavigation} from './';
 import {CustomDrawer} from '../Components/';
 import {PrivacyPolicyScreen} from '../Screens';
 
+interface CustomDrawerProps extends DrawerContentComponentProps {}
+
 const Drawer = createDrawerNavigator();
+
+const customDrawerRender = (props: CustomDrawerProps) => {
+  return <CustomDrawer {...props} />;
+};
+
+const iconRender = (icon: IconDefinition, size: number, color: string) => {
+  return <FontAwesomeIcon icon={icon} size={size} color={color} />;
+};
 
 const AppStack = () => {
   return (
@@ -14,14 +31,12 @@ const AppStack = () => {
       screenOptions={{
         headerShown: false,
       }}
-      drawerContent={props => <CustomDrawer {...props} />}>
+      drawerContent={props => customDrawerRender(props)}>
       <Drawer.Screen
         name="HomeNested"
         component={BottomTabNavigation}
         options={{
-          drawerIcon: () => (
-            <FontAwesomeIcon icon={faHome} size={22} color={'gray'} />
-          ),
+          drawerIcon: () => iconRender(faHome, 22, 'gray'),
           drawerLabelStyle: {
             fontFamily: 'Nunito-SemiBold',
             marginLeft: 1,
@@ -33,9 +48,7 @@ const AppStack = () => {
         name="PrivacyPolicy"
         component={PrivacyPolicyScreen}
         options={{
-          drawerIcon: () => (
-            <FontAwesomeIcon icon={faFileShield} size={22} color={'gray'} />
-          ),
+          drawerIcon: () => iconRender(faFileShield, 22, 'gray'),
           drawerLabelStyle: {
             fontFamily: 'Nunito-SemiBold',
             marginLeft: 1,

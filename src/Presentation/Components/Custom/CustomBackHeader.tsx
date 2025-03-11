@@ -1,9 +1,14 @@
 import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useNavigation,
+  useNavigationState,
+} from '@react-navigation/native';
 import {faArrowLeft} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {CustomHeaderStylesBack} from '../../Styles';
+import {RootStackParams} from '../../Navigation';
 
 interface CustomBackHeaderProps {
   children: React.ReactNode;
@@ -14,13 +19,33 @@ export const CustomBackHeader: React.FC<CustomBackHeaderProps> = ({
   children,
   coursesData,
 }) => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<RootStackParams>>();
+  const currentRouteName = useNavigationState(
+    state => state.routes[state.index].name,
+  );
+
+  const authRoutes = [
+    'VerifyForgotPasswordMfa',
+    'ResetPassword',
+    'ForgotPassword',
+  ];
+
+  const handleBack = () => {
+    if (authRoutes.includes(currentRouteName)) {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
+      return;
+    }
+    navigation.goBack();
+  };
 
   return (
     <View style={CustomHeaderStylesBack.container}>
       <TouchableOpacity
         style={CustomHeaderStylesBack.backIconWrapper}
-        onPress={() => navigation.goBack()}>
+        onPress={() => handleBack()}>
         <FontAwesomeIcon icon={faArrowLeft} size={24} color={'black'} />
       </TouchableOpacity>
       {coursesData ? (

@@ -34,7 +34,7 @@ interface SignIn {
 }
 
 export const LoginScreen = ({navigation}: Props) => {
-  const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isButtonSpinner, setIsButtonSpinner] = useState<boolean>(false);
 
   const handleSignIn = async (values: SignIn, resetForm: () => void) => {
@@ -139,7 +139,7 @@ export const LoginScreen = ({navigation}: Props) => {
                   />
                   <TouchableOpacity
                     style={SigninScreenStyles.visibleIcon}
-                    onPress={() => setPasswordVisible(!isPasswordVisible)}>
+                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
                     {isPasswordVisible ? (
                       <FontAwesomeIcon
                         icon={faEyeSlash}
