@@ -1,25 +1,20 @@
-import {useEffect, useMemo} from 'react';
-import {Alert, AppState, AppStateStatus} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {EvaIconsPack} from '@ui-kitten/eva-icons';
+import {useEffect, useState} from 'react';
 import {
-  ApplicationProvider,
-  IconRegistry,
-  ModalService,
-} from '@ui-kitten/components';
-import {appThemeNavigation, ThemeContext} from './presentation/theme/theme';
-import {StackNavigator} from './presentation/navigation/StackNavigator';
-import {AuthProvider} from './presentation/providers/auth.provider';
-import {authStore, ThemeHook, validHash} from './shared';
-import {servicesContainer} from './presentation/providers/service.provider';
-import {StorageAdapter} from './infrastructure/adapters/storage';
-import * as eva from '@eva-design/eva';
+  AppState,
+  AppStateStatus,
+  StatusBar,
+  useWindowDimensions,
+} from 'react-native';
+import {Toast, ToastProvider} from 'react-native-toast-notifications';
+import {AppNavigation} from './Presentation/Navigation';
+import {AlertError, AnimatedLoading} from './Presentation/Components';
+import {StorageAdapter} from './Infrastructure';
+import {authStore, errorStore, servicesContainer, validHash} from './Shared';
 
-ModalService.setShouldUseTopInsets = true;
-
-function App(): React.JSX.Element {
-  const {theme, toggleTheme} = ThemeHook();
+export default function App(): React.JSX.Element {
   const {logout} = authStore();
+  const [loading, setLoading] = useState<boolean>(true);
+  const {height, width} = useWindowDimensions();
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
@@ -40,40 +35,62 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     const getPublicKey = async () => {
+      setLoading(true);
       const response = await servicesContainer.auth.getPublicKey();
 
       if (response === null) {
-        Alert.alert('Error', 'Error getting public key');
+        Toast.show(<AlertError />, {
+          type: 'danger',
+          placement: 'center',
+          duration: 4000,
+          animationType: 'zoom-in',
+          dangerColor: 'transparent',
+        });
         await StorageAdapter.removeItem('publicKey-server');
+        setLoading(false);
         return;
       }
 
       if (!validHash(response.data.publicKey, response.data.sha256Hash)) {
-        Alert.alert('Error', 'Error validating public key');
+        errorStore.setState({message: 'No se pudo verificar la llave pública'});
+        Toast.show(<AlertError />, {
+          type: 'danger',
+          placement: 'center',
+          duration: 4000,
+          animationType: 'zoom-in',
+          dangerColor: 'transparent',
+        });
+        setLoading(false);
         return;
       }
-
       await StorageAdapter.setItem('publicKey-server', response.data.publicKey);
+      setLoading(false);
     };
-
-    getPublicKey();
+   
+    setTimeout(() => {
+      getPublicKey();
+    }, 2000);
   }, []);
 
   return (
     <>
-      <IconRegistry icons={EvaIconsPack} />
-      <ThemeContext.Provider
-        value={useMemo(() => ({theme, toggleTheme}), [theme, toggleTheme])}>
-        <ApplicationProvider {...eva} theme={eva[theme]}>
-          <NavigationContainer theme={{...(appThemeNavigation())}}>
-            <AuthProvider>
-              <StackNavigator />
-            </AuthProvider>
-          </NavigationContainer>
-        </ApplicationProvider>
-      </ThemeContext.Provider>
+      {loading ? (
+        <AnimatedLoading />
+      ) : (
+        <>
+          <StatusBar backgroundColor={'#E5ECF9'} barStyle="dark-content" />
+          <ToastProvider
+            style={{
+              width,
+              height,
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <AppNavigation />
+          </ToastProvider>
+        </>
+      )}
     </>
   );
 }
-
-export default App;
