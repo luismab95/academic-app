@@ -3,6 +3,7 @@ export * from "./Custom/CustomBackHeader";
 export * from "./Custom/CustomDrawer";
 export * from "./Custom/CustomDrawerHeader";
 export * from "./Custom/CustomErrorInput";
+export * from "./Custom/CustomError";
 export * from "./Otp/CustomOtpInput";
 export * from "./Header/Header";
 export * from "./Modal/AlertError";

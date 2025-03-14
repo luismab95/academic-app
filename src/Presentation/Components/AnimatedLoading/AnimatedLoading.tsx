@@ -23,7 +23,7 @@ export const AnimatedLoading = () => {
           }}>
           <FontAwesomeIcon icon={faLock} size={16} color={'#747474'} />
           <Text style={{marginLeft: 5, fontFamily: 'Nunito-SemiBold'}}>
-            Toda la comunicación está cifrada de extremo a extremo.
+            Cifrado de extremo a extremo.
           </Text>
         </View>
       </AnimatedLoader>

@@ -5,15 +5,17 @@ import {
   StatusBar,
   useWindowDimensions,
 } from 'react-native';
-import {Toast, ToastProvider} from 'react-native-toast-notifications';
+import {ToastProvider} from 'react-native-toast-notifications';
 import {AppNavigation} from './Presentation/Navigation';
-import {AlertError, AnimatedLoading} from './Presentation/Components';
+import {AnimatedLoading, CustomError} from './Presentation/Components';
 import {StorageAdapter} from './Infrastructure';
 import {authStore, errorStore, servicesContainer, validHash} from './Shared';
 
 export default function App(): React.JSX.Element {
   const {logout} = authStore();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [retry, setRetry] = useState<boolean>(false);
+  const [errorService, setErrorService] = useState<boolean>(false);
   const {height, width} = useWindowDimensions();
 
   useEffect(() => {
@@ -34,43 +36,40 @@ export default function App(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     const getPublicKey = async () => {
-      setLoading(true);
+      setErrorService(false);
       const response = await servicesContainer.auth.getPublicKey();
 
       if (response === null) {
-        Toast.show(<AlertError />, {
-          type: 'danger',
-          placement: 'center',
-          duration: 4000,
-          animationType: 'zoom-in',
-          dangerColor: 'transparent',
-        });
+        setErrorService(true);
         await StorageAdapter.removeItem('publicKey-server');
         setLoading(false);
         return;
       }
 
       if (!validHash(response.data.publicKey, response.data.sha256Hash)) {
+        setErrorService(true);
         errorStore.setState({message: 'No se pudo verificar la llave pública'});
-        Toast.show(<AlertError />, {
-          type: 'danger',
-          placement: 'center',
-          duration: 4000,
-          animationType: 'zoom-in',
-          dangerColor: 'transparent',
-        });
         setLoading(false);
         return;
       }
       await StorageAdapter.setItem('publicKey-server', response.data.publicKey);
       setLoading(false);
     };
-   
-    setTimeout(() => {
+
+    const interval = setTimeout(() => {
       getPublicKey();
     }, 2000);
-  }, []);
+
+    return () => {
+      clearTimeout(interval);
+    };
+  }, [retry]);
+
+  const handleRetry = () => {
+    setRetry(!retry);
+  };
 
   return (
     <>
@@ -87,7 +86,11 @@ export default function App(): React.JSX.Element {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <AppNavigation />
+            {errorService ? (
+              <CustomError loading={loading} handleRetry={handleRetry} />
+            ) : (
+              <AppNavigation />
+            )}
           </ToastProvider>
         </>
       )}

@@ -13,28 +13,25 @@ import {
   VerifyForgotPasswordMfaScreen,
   WelcomeScreen,
 } from '../Screens';
-import {AlertError, AnimatedLoading} from '../Components';
+import {AlertError, AnimatedLoading, CustomError} from '../Components';
 
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => {
   const [routeName, setRouteName] = useState<string>('Welcome');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errorService, setErrorService] = useState<boolean>(false);
+  const [retry, setRetry] = useState<boolean>(false);
 
   useEffect(() => {
+    setLoading(true);
     const findDevice = async () => {
-      setLoading(true);
+      setErrorService(false);
       const serie = await DeviceInfo.getUniqueId();
       const response = await servicesContainer.device.getDeviceBySerie(serie);
 
       if (response === null) {
-        Toast.show(<AlertError />, {
-          type: 'danger',
-          placement: 'center',
-          duration: 3000,
-          animationType: 'zoom-in',
-          dangerColor: 'transparent',
-        });
+        setErrorService(true);
         setLoading(false);
         return;
       }
@@ -51,11 +48,13 @@ const AuthStack = () => {
       }
       setLoading(false);
     };
+
     const timer = setTimeout(() => {
       findDevice();
     }, 2000);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [retry]);
 
   const onCreateDevice = async () => {
     const response = await createDevice();
@@ -71,48 +70,58 @@ const AuthStack = () => {
     }
   };
 
+  const handleRetry = () => {
+    setRetry(!retry);
+  };
+
   return (
     <>
       {loading ? (
         <AnimatedLoading />
       ) : (
-        <Stack.Navigator initialRouteName={routeName}>
-          <Stack.Screen
-            name="Welcome"
-            component={WelcomeScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="SignInMfa"
-            component={SignInMfaScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="Register"
-            component={SignupScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="ForgotPassword"
-            component={ForgotPasswordScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="VerifyForgotPasswordMfa"
-            component={VerifyForgotPasswordMfaScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="ResetPassword"
-            component={ResetPasswordScreen}
-            options={{headerShown: false}}
-          />
-        </Stack.Navigator>
+        <>
+          {errorService ? (
+            <CustomError loading={loading} handleRetry={handleRetry} />
+          ) : (
+            <Stack.Navigator initialRouteName={routeName}>
+              <Stack.Screen
+                name="Welcome"
+                component={WelcomeScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="SignInMfa"
+                component={SignInMfaScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="Register"
+                component={SignupScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPasswordScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="VerifyForgotPasswordMfa"
+                component={VerifyForgotPasswordMfaScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="ResetPassword"
+                component={ResetPasswordScreen}
+                options={{headerShown: false}}
+              />
+            </Stack.Navigator>
+          )}
+        </>
       )}
     </>
   );
