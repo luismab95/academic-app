@@ -8,7 +8,7 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,6 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@fortawesome/react-native-fontawesome": "^0.3.2",
-    "@react-native-async-storage/async-storage": "^2.1.1",
     "@react-navigation/bottom-tabs": "^7.2.1",
     "@react-navigation/drawer": "^7.1.2",
     "@react-navigation/native": "^7.0.14",
@@ -40,6 +39,7 @@
     "react-native-device-info": "^14.0.4",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.23.0",
+    "react-native-keychain": "^10.0.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-network-info": "^5.2.1",
     "react-native-otp-textinput": "^1.1.6",

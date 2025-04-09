@@ -1,27 +1,20 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Keychain from 'react-native-keychain';
 
 export class StorageAdapter {
   static async getItem(key: string): Promise<string | null> {
-    try {
-      return await AsyncStorage.getItem(key);
-    } catch (error) {
+    const credentials = await Keychain.getGenericPassword({service: key});
+    if (credentials) {
+      return credentials.password;
+    } else {
       return null;
     }
   }
 
   static async setItem(key: string, value: string): Promise<void> {
-    try {
-      await AsyncStorage.setItem(key, value);
-    } catch (error) {
-      throw new Error(`Error setting item ${key} ${value}`);
-    }
+    await Keychain.setGenericPassword(key, value, {service: key});
   }
 
   static async removeItem(key: string): Promise<void> {
-    try {
-      await AsyncStorage.removeItem(key);
-    } catch (error) {
-      throw new Error(`Error removing item ${key}`);
-    }
+    await Keychain.resetGenericPassword({service: key});
   }
 }

@@ -5,15 +5,18 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import LinearGradient from 'react-native-linear-gradient';
-
-import {authStore} from '../../../Shared';
-import {CustomDrawerStyles} from '../../Styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faRightFromBracket} from '@fortawesome/free-solid-svg-icons';
+import {authStore} from '../../../Shared';
+import {CustomDrawerStyles} from '../../Styles';
 
 export const CustomDrawer = (props: DrawerContentComponentProps) => {
   const {logout, getPayloadToken} = authStore();
   const user = getPayloadToken ? getPayloadToken() : {};
+
+  const handleSignOut = async () => {
+    await logout!();
+  };
 
   return (
     <LinearGradient
@@ -51,7 +54,7 @@ export const CustomDrawer = (props: DrawerContentComponentProps) => {
       </DrawerContentScrollView>
       <TouchableOpacity
         style={CustomDrawerStyles.signOutButton}
-        onPress={async () => await logout!()}>
+        onPress={() => handleSignOut()}>
         <FontAwesomeIcon
           icon={faRightFromBracket}
           size={24}
