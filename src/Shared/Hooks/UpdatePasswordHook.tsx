@@ -246,24 +246,24 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
         <CustomBackHeader>{titleUpdatePasswordRender()}</CustomBackHeader>
         <ScrollView>
           <Image
-            style={ForgotPasswordStyles.image}
+            style={SigninScreenStyles.signInImage}
             source={require('./../../../assets/Images/Forgot_password/reset_password.png')}
           />
           <Text
             style={[
-              ForgotPasswordStyles.welcomeText,
+              SigninScreenStyles.welcomeText,
               {fontFamily: 'Raleway-Bold'},
             ]}>
             ¡Crear tu nueva contraseña!
           </Text>
           <Text
             style={[
-              ForgotPasswordStyles.learningText,
+              SigninScreenStyles.learningText,
               {fontFamily: 'Nunito-Regular'},
             ]}>
             Ingresa una nueva contraseña para tu cuenta
           </Text>
-          <View style={ForgotPasswordStyles.inputContainer}>
+          <View style={SigninScreenStyles.inputContainer}>
             <Formik
               initialValues={{password: '', confirmPassword: ''} as any}
               validationSchema={ResetPasswordSchema}
@@ -283,7 +283,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
                 <>
                   <View>
                     <TextInput
-                      style={ForgotPasswordStyles.input}
+                      style={SigninScreenStyles.input}
                       placeholder="Nueva contraseña"
                       keyboardType="default"
                       secureTextEntry={!isPasswordVisible}
@@ -293,7 +293,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
                       onChangeText={handleChange('password')}
                     />
                     <TouchableOpacity
-                      style={ForgotPasswordStyles.visibleIcon}
+                      style={SigninScreenStyles.visibleIcon}
                       onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
                       {isPasswordVisible ? (
                         <FontAwesomeIcon
@@ -310,7 +310,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
                       )}
                     </TouchableOpacity>
                     <FontAwesomeIcon
-                      style={ForgotPasswordStyles.icon}
+                      style={SigninScreenStyles.icon}
                       icon={faKeyboard}
                       size={20}
                       color={'#A1A1A1'}
@@ -324,7 +324,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
 
                   <View>
                     <TextInput
-                      style={ForgotPasswordStyles.input}
+                      style={SigninScreenStyles.input}
                       placeholder="Repite la contraseña"
                       keyboardType="default"
                       secureTextEntry={!isPasswordVisibleConfirm}
@@ -334,7 +334,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
                       onChangeText={handleChange('confirmPassword')}
                     />
                     <TouchableOpacity
-                      style={ForgotPasswordStyles.visibleIcon}
+                      style={SigninScreenStyles.visibleIcon}
                       onPress={() =>
                         setIsPasswordVisibleConfirm(!isPasswordVisibleConfirm)
                       }>
@@ -353,7 +353,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
                       )}
                     </TouchableOpacity>
                     <FontAwesomeIcon
-                      style={ForgotPasswordStyles.icon}
+                      style={SigninScreenStyles.icon}
                       icon={faKeyboard}
                       size={20}
                       color={'#A1A1A1'}
