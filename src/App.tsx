@@ -18,22 +18,22 @@ export default function App(): React.JSX.Element {
   const [errorService, setErrorService] = useState<boolean>(false);
   const {height, width} = useWindowDimensions();
 
-  useEffect(() => {
-    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' || nextAppState === 'inactive') {
-        await logout!();
-      }
-    };
+  // useEffect(() => {
+  //   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+  //     if (nextAppState === 'background' || nextAppState === 'inactive') {
+  //       await logout!();
+  //     }
+  //   };
 
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
+  //   const subscription = AppState.addEventListener(
+  //     'change',
+  //     handleAppStateChange,
+  //   );
 
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
 
   useEffect(() => {
     setLoading(true);

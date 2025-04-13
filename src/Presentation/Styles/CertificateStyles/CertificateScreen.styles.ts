@@ -88,4 +88,71 @@ export const styles = StyleSheet.create({
     width: responsiveWidth(90),
     height: Dimensions.get('window').height,
   },
+
+  inputContainer: {
+    paddingHorizontal: 16,
+  },
+  card: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+    padding: 25,
+    alignItems: 'center',
+    height: 250,
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: '#3f51b5',
+  },
+  loadFile: {
+    borderStyle: 'solid',
+  },
+  cardContent: {
+    alignItems: 'center',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: '#333',
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 5,
+  },
+
+  certificateContainer: {
+    marginTop: 16,
+    flex: 1,
+    padding: 16,
+  },
+  cardDetail: {
+    borderRadius: 10,
+    padding: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+    textAlign: 'center',
+  },
+  infoContainer: {
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 5,
+  },
+  value: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#222',
+  },
+  code: {
+    color: '#2c3e50',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
 });

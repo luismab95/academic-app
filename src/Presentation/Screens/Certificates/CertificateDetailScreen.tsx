@@ -79,7 +79,7 @@ export const CertificateDetailScreen = () => {
       Toast.show(<AlertError />, {
         type: 'danger',
         placement: 'center',
-        duration: 3000,
+        duration: 5000,
         animationType: 'zoom-in',
         dangerColor: 'transparent',
       });
@@ -114,11 +114,11 @@ export const CertificateDetailScreen = () => {
     Toast.show(<AlertSuccess message={response.data} />, {
       type: 'success',
       placement: 'center',
-      duration: 5000,
+      duration: 3000,
       animationType: 'zoom-in',
       successColor: 'transparent',
       onClose: () => {
-        navigate.goBack();
+        navigate.navigate('CertificateDownload');
       },
     });
     setIsButtonSpinner(false);

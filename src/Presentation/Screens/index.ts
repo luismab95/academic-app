@@ -10,5 +10,8 @@ export * from './Setting/SecurityScreen';
 export * from './Setting/SettingScreen';
 export * from './Signup/SignupScreen';
 export * from './Welcome/WelcomeScreen';
+export * from './Welcome/RoleScreen';
 export * from './Certificates/CertificateScreen';
 export * from './Certificates/CertificateDetailScreen';
+export * from './Certificates/CertificateDownloadScreen';
+export * from './Certificates/CertificateValidateScreen';

@@ -5,9 +5,11 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {StorageAdapter} from '../../Infrastructure';
 import {createDevice, servicesContainer} from '../../Shared';
 import {
+  CertificateValidateScreen,
   ForgotPasswordScreen,
   LoginScreen,
   ResetPasswordScreen,
+  RoleScreen,
   SignInMfaScreen,
   SignupScreen,
   VerifyForgotPasswordMfaScreen,
@@ -44,7 +46,7 @@ const AuthStack = () => {
         if (privateKey === null || publicKey === null) {
           await onCreateDevice();
         }
-        setRouteName('Login');
+        setRouteName('Role');
       }
       setLoading(false);
     };
@@ -87,6 +89,16 @@ const AuthStack = () => {
               <Stack.Screen
                 name="Welcome"
                 component={WelcomeScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="Role"
+                component={RoleScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="CertificateValidate"
+                component={CertificateValidateScreen}
                 options={{headerShown: false}}
               />
               <Stack.Screen

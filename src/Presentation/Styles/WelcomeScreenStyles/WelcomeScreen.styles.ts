@@ -59,4 +59,53 @@ export const styles = StyleSheet.create({
     color: Colors.NEUTRAL.NEUTRAL_WHITE,
     fontSize: 16,
   },
+
+  containerRole: {
+    flex: 1,
+    padding: 25,
+    alignItems: 'center',
+  },
+
+  cardsContainer: {
+    width: '100%',
+    maxWidth: 400,
+  },
+  card: {
+    borderRadius: 15,
+    padding: 25,
+    marginBottom: 25,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+
+  studentCard: {
+    backgroundColor: '#ffffff',
+    borderColor: '#3498db',
+    borderWidth: 1,
+  },
+  verifierCard: {
+    backgroundColor: '#ffffff',
+    borderColor: '#2ecc71',
+    borderWidth: 1,
+  },
+  cardTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#2c3e50',
+  },
+  cardDescription: {
+    fontSize: 15,
+    color: '#34495e',
+    lineHeight: 22,
+    marginBottom: 15,
+  },
+  cardActionText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#3498db',
+    textAlign: 'right',
+  },
 });

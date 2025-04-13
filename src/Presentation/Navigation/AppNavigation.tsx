@@ -25,8 +25,11 @@ export type RootStackParams = {
   PrivacyPolicy: undefined;
   Certificate: undefined;
   CertificateDetail: {item: AcademicRecord};
+  CertificateDownload: undefined;
+  CertificateValidate: undefined;
   Activity: undefined;
   Certificados: undefined;
+  RoleScreen: undefined;
 };
 
 export const AppNavigation = () => {

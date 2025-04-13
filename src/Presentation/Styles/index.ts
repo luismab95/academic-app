@@ -13,6 +13,7 @@ export {styles as WelcomeScreenStyles} from './WelcomeScreenStyles/WelcomeScreen
 export {styles as ModalStyles} from './ModalStyles/Alert.styles';
 export {styles as CustomErrorInputStyles} from './ErrorInputStyles/ErrorInput.styles';
 export {styles as PrivacyPolicyStyles} from './AboutUsStyles/PrivacyPolicy.styles';
-export {styles as CertificatesStyles} from './PopulerCoursesStyle/PopulerCoursesScreen.styles';
+export {styles as CertificatesStyles} from './CertificateStyles/CertificateScreen.styles';
 export {styles as HomeBannerSliderScreenStyles} from './HomeScreenStyles/HomeBannerSliderScreen.styles';
 export {styles as HomeCertificatesStyles} from './HomeScreenStyles/HomeCertificates.styles';
+export {styles as CertificateStyles} from './CertificateStyles/CertificateScreen.styles';

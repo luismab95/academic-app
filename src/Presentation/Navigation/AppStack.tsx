@@ -8,10 +8,11 @@ import {
   faHome,
   faFileShield,
   IconDefinition,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import {BottomTabNavigation} from './';
 import {CustomDrawer} from '../Components/';
-import {PrivacyPolicyScreen} from '../Screens';
+import {CertificateDownloadScreen, PrivacyPolicyScreen} from '../Screens';
 
 interface CustomDrawerProps extends DrawerContentComponentProps {}
 
@@ -42,6 +43,18 @@ const AppStack = () => {
             marginLeft: 1,
           },
           title: 'Inicio',
+        }}
+      />
+      <Drawer.Screen
+        name="CertificateDownload"
+        component={CertificateDownloadScreen}
+        options={{
+          drawerIcon: () => iconRender(faFilePdf, 22, 'gray'),
+          drawerLabelStyle: {
+            fontFamily: 'Nunito-SemiBold',
+            marginLeft: 1,
+          },
+          title: 'Obtener Certificado',
         }}
       />
       <Drawer.Screen
