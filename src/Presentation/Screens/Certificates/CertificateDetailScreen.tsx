@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Toast} from 'react-native-toast-notifications';
 import Pdf from 'react-native-pdf';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -29,6 +28,15 @@ export const CertificateDetailScreen = () => {
   const route = useRoute();
   const {item} = route.params as {item: AcademicRecord};
 
+  const [modal, setModal] = useState<{
+    success: boolean;
+    error: boolean;
+    message: string;
+  }>({
+    success: false,
+    error: false,
+    message: '',
+  });
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isButtonSpinner, setIsButtonSpinner] = useState<boolean>(false);
@@ -52,13 +60,7 @@ export const CertificateDetailScreen = () => {
       );
 
       if (response === null) {
-        Toast.show(<AlertError />, {
-          type: 'danger',
-          placement: 'center',
-          duration: 3000,
-          animationType: 'zoom-in',
-          dangerColor: 'transparent',
-        });
+        setModal({success: false, error: true, message: ''});
         setIsLoading(false);
         return;
       }
@@ -76,13 +78,7 @@ export const CertificateDetailScreen = () => {
     setIsLoading(true);
     const response = await servicesContainer.user.getUserById();
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 5000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsLoading(false);
       return null;
     }
@@ -100,27 +96,12 @@ export const CertificateDetailScreen = () => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsButtonSpinner(false);
       return;
     }
 
-    Toast.show(<AlertSuccess message={response.data} />, {
-      type: 'success',
-      placement: 'center',
-      duration: 3000,
-      animationType: 'zoom-in',
-      successColor: 'transparent',
-      onClose: () => {
-        navigate.navigate('CertificateDownload');
-      },
-    });
+    setModal({success: true, error: false, message: response.data});
     setIsButtonSpinner(false);
   };
 
@@ -158,6 +139,28 @@ export const CertificateDetailScreen = () => {
           </View>
         </LinearGradient>
       )}
+      <AlertError
+        show={modal.error}
+        onClose={() =>
+          setModal({
+            error: false,
+            success: false,
+            message: '',
+          })
+        }
+      />
+      <AlertSuccess
+        message={modal.message}
+        show={modal.success}
+        onClose={() => {
+          setModal({
+            error: false,
+            success: false,
+            message: '',
+          });
+          navigate.navigate('CertificateDownload');
+        }}
+      />
     </>
   );
 };

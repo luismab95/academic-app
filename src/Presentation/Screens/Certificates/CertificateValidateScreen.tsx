@@ -1,11 +1,8 @@
 import {
   ActivityIndicator,
-  Button,
   Image,
   ScrollView,
-  StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -15,15 +12,13 @@ import {
   SigninScreenStyles,
   WelcomeScreenStyles,
 } from '../../Styles';
-import {Formik} from 'formik';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useState} from 'react';
 import DocumentPicker from 'react-native-document-picker';
 import {readFile} from 'react-native-fs';
-import {Toast} from 'react-native-toast-notifications';
-import {AlertError} from '../../Components';
-import {errorStore, servicesContainer} from '../../../Shared';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faFilePdf, faUpload} from '@fortawesome/free-solid-svg-icons';
+import {AlertError, CustomBackHeader} from '../../Components';
+import {errorStore, servicesContainer} from '../../../Shared';
 import {CertificateData} from '../../../Domian';
 
 export const CertificateValidateScreen = () => {
@@ -33,6 +28,7 @@ export const CertificateValidateScreen = () => {
   const [filename, setFilename] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
   const [validationState, setValidationState] = useState({
     validateCode: true,
     noInfo: false,
@@ -59,22 +55,12 @@ export const CertificateValidateScreen = () => {
         type: [DocumentPicker.types.pdf],
       });
       setFilename(res[0].name || 'PDF');
-      //todo ver porque cambioa el base64
       const fileContent = await readFile(res[0].uri, 'base64');
-      console.log(fileContent);
-      
       setBase64String(fileContent);
       setIsValid(true);
     } catch (err) {
       errorStore.setState({
         message: 'No se pudo cargar el documento, vuelva a intentarlo.',
-      });
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 5000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
       });
     }
   };
@@ -285,7 +271,7 @@ export const CertificateValidateScreen = () => {
           </View>
 
           <View style={CertificatesStyles.infoContainer}>
-            <Text style={CertificatesStyles.label}>Fecha de creación:</Text>
+            <Text style={CertificatesStyles.label}>Fecha de emisión:</Text>
             <Text style={CertificatesStyles.value}>
               {certificateData?.createdAt}
             </Text>
@@ -303,7 +289,7 @@ export const CertificateValidateScreen = () => {
                 WelcomeScreenStyles.buttonText,
                 {fontFamily: 'Raleway-Bold'},
               ]}>
-              Nueva Validación
+              Regresar
             </Text>
           )}
         </TouchableOpacity>
@@ -323,10 +309,14 @@ export const CertificateValidateScreen = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#E5ECF9', '#F6F7F9']}
-      style={CertificatesStyles.container}>
-      <ScrollView>{renderContent()}</ScrollView>
-    </LinearGradient>
+    <>
+      <LinearGradient
+        colors={['#E5ECF9', '#F6F7F9']}
+        style={CertificatesStyles.container}>
+        <CustomBackHeader>Validar Certificado</CustomBackHeader>
+        <ScrollView>{renderContent()}</ScrollView>
+      </LinearGradient>
+      <AlertError show={modal} onClose={() => setModal(false)} />
+    </>
   );
 };

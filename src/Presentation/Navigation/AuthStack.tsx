@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import {Toast} from 'react-native-toast-notifications';
 import DeviceInfo from 'react-native-device-info';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {StorageAdapter} from '../../Infrastructure';
@@ -24,6 +23,7 @@ const AuthStack = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorService, setErrorService] = useState<boolean>(false);
   const [retry, setRetry] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -62,13 +62,7 @@ const AuthStack = () => {
     const response = await createDevice();
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+     setModal(true);
     }
   };
 
@@ -135,6 +129,7 @@ const AuthStack = () => {
           )}
         </>
       )}
+      <AlertError show={modal} onClose={() => setModal(false)} />
     </>
   );
 };

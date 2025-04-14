@@ -1,11 +1,5 @@
 import {useEffect, useState} from 'react';
-import {
-  AppState,
-  AppStateStatus,
-  StatusBar,
-  useWindowDimensions,
-} from 'react-native';
-import {ToastProvider} from 'react-native-toast-notifications';
+import {StatusBar, useWindowDimensions} from 'react-native';
 import {AppNavigation} from './Presentation/Navigation';
 import {AnimatedLoading, CustomError} from './Presentation/Components';
 import {StorageAdapter} from './Infrastructure';
@@ -78,20 +72,11 @@ export default function App(): React.JSX.Element {
       ) : (
         <>
           <StatusBar backgroundColor={'#E5ECF9'} barStyle="dark-content" />
-          <ToastProvider
-            style={{
-              width,
-              height,
-              backgroundColor: 'rgba(255, 255, 255, 0)',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            {errorService ? (
-              <CustomError loading={loading} handleRetry={handleRetry} />
-            ) : (
-              <AppNavigation />
-            )}
-          </ToastProvider>
+          {errorService ? (
+            <CustomError loading={loading} handleRetry={handleRetry} />
+          ) : (
+            <AppNavigation />
+          )}
         </>
       )}
     </>

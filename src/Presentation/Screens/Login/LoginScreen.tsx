@@ -9,7 +9,6 @@ import {
   ScrollView,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Toast} from 'react-native-toast-notifications';
 import {NavigationProp} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -36,6 +35,7 @@ interface SignIn {
 export const LoginScreen = ({navigation}: Props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isButtonSpinner, setIsButtonSpinner] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
 
   const handleSignIn = async (values: SignIn, resetForm: () => void) => {
     setIsButtonSpinner(true);
@@ -45,13 +45,7 @@ export const LoginScreen = ({navigation}: Props) => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal(true);
       setIsButtonSpinner(false);
       return;
     }
@@ -65,160 +59,165 @@ export const LoginScreen = ({navigation}: Props) => {
   };
 
   return (
-    <LinearGradient
-      colors={['#E5ECF9', '#F6F7F9']}
-      style={SigninScreenStyles.container}>
-      <ScrollView>
-        <Image
-          style={SigninScreenStyles.signInImage}
-          source={require('./../../../../assets/Images/Sign_in/sign_in.png')}
-        />
-        <Text
-          style={[
-            SigninScreenStyles.welcomeText,
-            {fontFamily: 'Raleway-Bold'},
-          ]}>
-          ¡Bienvenido de nuevo!
-        </Text>
-        <Text
-          style={[
-            SigninScreenStyles.learningText,
-            {fontFamily: 'Nunito-Regular'},
-          ]}>
-          Inicie Sesión en su Cuenta
-        </Text>
-        <View style={SigninScreenStyles.inputContainer}>
-          <Formik
-            initialValues={{email: '', password: ''} as SignIn}
-            validationSchema={SignInSchema}
-            validateOnMount
-            onSubmit={(values, {resetForm}) => handleSignIn(values, resetForm)}>
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              touched,
-              errors,
-              isValid,
-            }) => (
-              <>
-                <View>
-                  <TextInput
-                    placeholder="Correo electrónico"
-                    style={SigninScreenStyles.input}
-                    keyboardType="email-address"
-                    value={values.email}
-                    readOnly={isButtonSpinner}
-                    onBlur={handleBlur('email')}
-                    onChangeText={handleChange('email')}
-                  />
-                  <FontAwesomeIcon
-                    style={SigninScreenStyles.icon}
-                    icon={faEnvelope}
-                    size={20}
-                    color={'#A1A1A1'}
-                  />
-                  <CustomErrorInput
-                    errors={errors}
-                    touched={touched}
-                    field="email"
-                  />
-                </View>
+    <>
+      <LinearGradient
+        colors={['#E5ECF9', '#F6F7F9']}
+        style={SigninScreenStyles.container}>
+        <ScrollView>
+          <Image
+            style={SigninScreenStyles.signInImage}
+            source={require('./../../../../assets/Images/Sign_in/sign_in.png')}
+          />
+          <Text
+            style={[
+              SigninScreenStyles.welcomeText,
+              {fontFamily: 'Raleway-Bold'},
+            ]}>
+            ¡Bienvenido de nuevo!
+          </Text>
+          <Text
+            style={[
+              SigninScreenStyles.learningText,
+              {fontFamily: 'Nunito-Regular'},
+            ]}>
+            Inicie Sesión en su Cuenta
+          </Text>
+          <View style={SigninScreenStyles.inputContainer}>
+            <Formik
+              initialValues={{email: '', password: ''} as SignIn}
+              validationSchema={SignInSchema}
+              validateOnMount
+              onSubmit={(values, {resetForm}) =>
+                handleSignIn(values, resetForm)
+              }>
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                touched,
+                errors,
+                isValid,
+              }) => (
+                <>
+                  <View>
+                    <TextInput
+                      placeholder="Correo electrónico"
+                      style={SigninScreenStyles.input}
+                      keyboardType="email-address"
+                      value={values.email}
+                      readOnly={isButtonSpinner}
+                      onBlur={handleBlur('email')}
+                      onChangeText={handleChange('email')}
+                    />
+                    <FontAwesomeIcon
+                      style={SigninScreenStyles.icon}
+                      icon={faEnvelope}
+                      size={20}
+                      color={'#A1A1A1'}
+                    />
+                    <CustomErrorInput
+                      errors={errors}
+                      touched={touched}
+                      field="email"
+                    />
+                  </View>
 
-                <View>
-                  <TextInput
-                    style={SigninScreenStyles.input}
-                    placeholder="Contraseña"
-                    keyboardType="default"
-                    secureTextEntry={!isPasswordVisible}
-                    value={values.password}
-                    readOnly={isButtonSpinner}
-                    onBlur={handleBlur('password')}
-                    onChangeText={handleChange('password')}
-                  />
+                  <View>
+                    <TextInput
+                      style={SigninScreenStyles.input}
+                      placeholder="Contraseña"
+                      keyboardType="default"
+                      secureTextEntry={!isPasswordVisible}
+                      value={values.password}
+                      readOnly={isButtonSpinner}
+                      onBlur={handleBlur('password')}
+                      onChangeText={handleChange('password')}
+                    />
+                    <TouchableOpacity
+                      style={SigninScreenStyles.visibleIcon}
+                      onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                      {isPasswordVisible ? (
+                        <FontAwesomeIcon
+                          icon={faEyeSlash}
+                          size={23}
+                          color={'#747474'}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          size={23}
+                          color={'#747474'}
+                        />
+                      )}
+                    </TouchableOpacity>
+                    <FontAwesomeIcon
+                      style={SigninScreenStyles.icon}
+                      icon={faKeyboard}
+                      size={20}
+                      color={'#A1A1A1'}
+                    />
+                    <CustomErrorInput
+                      errors={errors}
+                      touched={touched}
+                      field="password"
+                    />
+                  </View>
+
                   <TouchableOpacity
-                    style={SigninScreenStyles.visibleIcon}
-                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-                    {isPasswordVisible ? (
-                      <FontAwesomeIcon
-                        icon={faEyeSlash}
-                        size={23}
-                        color={'#747474'}
-                      />
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faEye}
-                        size={23}
-                        color={'#747474'}
-                      />
-                    )}
-                  </TouchableOpacity>
-                  <FontAwesomeIcon
-                    style={SigninScreenStyles.icon}
-                    icon={faKeyboard}
-                    size={20}
-                    color={'#A1A1A1'}
-                  />
-                  <CustomErrorInput
-                    errors={errors}
-                    touched={touched}
-                    field="password"
-                  />
-                </View>
-
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('ForgotPassword')}>
-                  <Text
-                    style={[
-                      SigninScreenStyles.forgotSection,
-                      {fontFamily: 'Nunito-SemiBold'},
-                    ]}>
-                    ¿Has olvidado tu contraseña?
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={SigninScreenStyles.buttonContainer}
-                  disabled={!isValid || isButtonSpinner}
-                  onPress={() => handleSubmit()}>
-                  {isButtonSpinner ? (
-                    <ActivityIndicator size={'small'} color={'white'} />
-                  ) : (
+                    onPress={() => navigation.navigate('ForgotPassword')}>
                     <Text
                       style={[
-                        SigninScreenStyles.buttonText,
-                        {fontFamily: 'Raleway-Bold'},
+                        SigninScreenStyles.forgotSection,
+                        {fontFamily: 'Nunito-SemiBold'},
                       ]}>
-                      Iniciar sesión
+                      ¿Has olvidado tu contraseña?
                     </Text>
-                  )}
-                </TouchableOpacity>
-              </>
-            )}
-          </Formik>
+                  </TouchableOpacity>
 
-          <View style={SigninScreenStyles.signupRedirect}>
-            <Text
-              style={[
-                SigninScreenStyles.signupTextStyle,
-                {fontFamily: 'Raleway-SemiBold'},
-              ]}>
-              ¿No tienes una cuenta?
-            </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                  <TouchableOpacity
+                    style={SigninScreenStyles.buttonContainer}
+                    disabled={!isValid || isButtonSpinner}
+                    onPress={() => handleSubmit()}>
+                    {isButtonSpinner ? (
+                      <ActivityIndicator size={'small'} color={'white'} />
+                    ) : (
+                      <Text
+                        style={[
+                          SigninScreenStyles.buttonText,
+                          {fontFamily: 'Raleway-Bold'},
+                        ]}>
+                        Iniciar sesión
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </>
+              )}
+            </Formik>
+
+            <View style={SigninScreenStyles.signupRedirect}>
               <Text
                 style={[
                   SigninScreenStyles.signupTextStyle,
                   {fontFamily: 'Raleway-SemiBold'},
-                  SigninScreenStyles.signupText,
                 ]}>
-                Registrarse
+                ¿No tienes una cuenta?
               </Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text
+                  style={[
+                    SigninScreenStyles.signupTextStyle,
+                    {fontFamily: 'Raleway-SemiBold'},
+                    SigninScreenStyles.signupText,
+                  ]}>
+                  Registrarse
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </LinearGradient>
+        </ScrollView>
+      </LinearGradient>
+      <AlertError show={modal} onClose={() => setModal(false)} />
+    </>
   );
 };

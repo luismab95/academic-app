@@ -41,6 +41,7 @@ export const CustomDrawer = (props: DrawerContentComponentProps) => {
             {user.fullname}
           </Text>
           <Text
+            numberOfLines={1}
             style={[
               CustomDrawerStyles.headerEmail,
               {fontFamily: 'Nunito-SemiBold'},

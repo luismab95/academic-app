@@ -3,6 +3,7 @@ import {NavigationProp, useRoute} from '@react-navigation/native';
 import {RootStackParams} from '../../Navigation';
 import {UpdatePasswordHook} from '../../../Shared';
 import {otpMethod} from '../../../Domian';
+import {AlertError, AlertSuccess} from '../../Components';
 
 interface Props {
   navigation: NavigationProp<RootStackParams, 'ResetPassword'>;
@@ -15,7 +16,7 @@ export const ResetPasswordScreen = ({navigation}: Props) => {
     userId: number;
   };
 
-  const {updatePasswordRender, setOtp} = UpdatePasswordHook({
+  const {updatePasswordRender, setOtp, modal, setModal} = UpdatePasswordHook({
     method,
     type: 'forgot-password',
     userId,
@@ -25,5 +26,31 @@ export const ResetPasswordScreen = ({navigation}: Props) => {
     setOtp(otp);
   }, []);
 
-  return updatePasswordRender();
+  return (
+    <>
+      {updatePasswordRender()}
+      <AlertError
+        show={modal.error}
+        onClose={() =>
+          setModal({
+            error: false,
+            success: false,
+            message: '',
+          })
+        }
+      />
+      <AlertSuccess
+        message={modal.message}
+        show={modal.success}
+        onClose={() => {
+          setModal({
+            error: false,
+            success: false,
+            message: '',
+          });
+          navigation.navigate('Login');
+        }}
+      />
+    </>
+  );
 };

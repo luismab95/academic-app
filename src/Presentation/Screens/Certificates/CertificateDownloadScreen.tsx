@@ -10,11 +10,18 @@ import {
 } from 'react-native';
 import Pdf from 'react-native-pdf';
 import LinearGradient from 'react-native-linear-gradient';
-import {useFocusEffect} from '@react-navigation/native';
+import {
+  useFocusEffect,
+} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faKey} from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 import {Formik} from 'formik';
-import {CustomBackHeader, CustomErrorInput} from '../../Components';
+import {
+  AlertSuccess,
+  CustomBackHeader,
+  CustomErrorInput,
+} from '../../Components';
 import {
   CertificatesStyles,
   SigninScreenStyles,
@@ -24,13 +31,21 @@ import {
   base64ToTempFile,
   errorStore,
   servicesContainer,
-  sharePdf,
   ValidateCertificateSchema,
 } from '../../../Shared';
 
 export const CertificateDownloadScreen = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [modal, setModal] = useState<{
+    success: boolean;
+    message: string;
+  }>({
+    success: false,
+    message: '',
+  });
+
   const [validationState, setValidationState] = useState({
     validateCode: true,
     noInfo: false,
@@ -244,36 +259,52 @@ export const CertificateDownloadScreen = () => {
   };
 
   const handleDownloadPdf = async () => {
-    const filePath = await base64ToTempFile(source.uri, 'certificado_temp.pdf');
-    await sharePdf(filePath);
+    const filename = `certificado-${moment().format('YYYY-MM-DD_hhmmss')}.pdf`;
+    const filePath = await base64ToTempFile(source.uri, filename);
+    setModal({
+      success: true,
+      message: `Documento guardado en ${filePath}, revisa tu carpeta de descargas.`,
+    });
   };
 
   return (
-    <LinearGradient
-      colors={['#E5ECF9', '#F6F7F9']}
-      style={CertificatesStyles.container}>
-      <CustomBackHeader>Obtener Certificado</CustomBackHeader>
-      <ScrollView>{renderContent()}</ScrollView>
-      {validationState.certificate && (
-        <View style={CertificatesStyles.enrollContainer}>
-          <TouchableOpacity
-            disabled={isLoading}
-            style={[CertificatesStyles.enrollButtonWrap]}
-            onPress={() => handleDownloadPdf()}>
-            {isLoading ? (
-              <ActivityIndicator size={'small'} color={'white'} />
-            ) : (
-              <Text
-                style={[
-                  CertificatesStyles.enrollText,
-                  {fontFamily: 'Raleway-Bold'},
-                ]}>
-                Descargar
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      )}
-    </LinearGradient>
+    <>
+      <LinearGradient
+        colors={['#E5ECF9', '#F6F7F9']}
+        style={CertificatesStyles.container}>
+        <CustomBackHeader>Obtener Certificado</CustomBackHeader>
+        <ScrollView>{renderContent()}</ScrollView>
+        {validationState.certificate && (
+          <View style={CertificatesStyles.enrollContainer}>
+            <TouchableOpacity
+              disabled={isLoading}
+              style={[CertificatesStyles.enrollButtonWrap]}
+              onPress={() => handleDownloadPdf()}>
+              {isLoading ? (
+                <ActivityIndicator size={'small'} color={'white'} />
+              ) : (
+                <Text
+                  style={[
+                    CertificatesStyles.enrollText,
+                    {fontFamily: 'Raleway-Bold'},
+                  ]}>
+                  Descargar
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+      </LinearGradient>
+      <AlertSuccess
+        message={modal.message}
+        show={modal.success}
+        onClose={() => {
+          setModal({
+            success: false,
+            message: '',
+          });
+        }}
+      />
+    </>
   );
 };

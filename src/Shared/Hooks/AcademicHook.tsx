@@ -1,13 +1,12 @@
 import {useEffect, useState} from 'react';
-import {Toast} from 'react-native-toast-notifications';
 import {AcademicRecord} from '../../Domian';
-import {AlertError} from '../../Presentation/Components';
 import {servicesContainer} from '../Providers/ServicesProvider';
 import {StorageAdapter} from '../../Infrastructure';
 
 export const AcademicHook = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [academicRecords, setAcademicRecords] = useState<AcademicRecord[]>([]);
+  const [modal, setModal] = useState<boolean>(false);
 
   useEffect(() => {
     getAcademic();
@@ -24,13 +23,7 @@ export const AcademicHook = () => {
 
     const response = await servicesContainer.academic.getAcademic();
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal(true);
       setIsLoading(false);
       return;
     }
@@ -43,5 +36,7 @@ export const AcademicHook = () => {
   return {
     academicRecords,
     isLoading,
+    modal,
+    setModal,
   };
 };

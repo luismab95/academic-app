@@ -1,7 +1,7 @@
 import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {AnimatedLoading, CustomDrawerHeader} from '../../Components';
+import {AlertError, AnimatedLoading, CustomDrawerHeader} from '../../Components';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCalendar} from '@fortawesome/free-solid-svg-icons';
 import {AcademicRecord} from '../../../Domian';
@@ -10,7 +10,7 @@ import {AcademicHook} from '../../../Shared';
 import {CertificatesStyles, WelcomeScreenStyles} from '../../Styles';
 
 export const CertificateScreen = () => {
-  const {academicRecords, isLoading} = AcademicHook();
+  const {academicRecords, isLoading, modal, setModal} = AcademicHook();
   const navigate = useNavigation<NavigationProp<RootStackParams>>();
 
   const handleCertificateDetails = (item: AcademicRecord) => {
@@ -145,6 +145,7 @@ export const CertificateScreen = () => {
           )}
         </LinearGradient>
       )}
+      <AlertError show={modal} onClose={() => setModal(false)} />
     </>
   );
 };

@@ -8,9 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Toast} from 'react-native-toast-notifications';
 import LinearGradient from 'react-native-linear-gradient';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {servicesContainer} from '../Providers/ServicesProvider';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -20,10 +18,7 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import {Formik} from 'formik';
 import {otpMethod, otpType} from '../../Domian';
-import {RootStackParams} from '../../Presentation/Navigation';
 import {
-  AlertError,
-  AlertSuccess,
   CustomBackHeader,
   CustomErrorInput,
   CustomOptInput,
@@ -57,8 +52,15 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isPasswordVisibleConfirm, setIsPasswordVisibleConfirm] =
     useState<boolean>(false);
-
-  const navigation = useNavigation<NavigationProp<RootStackParams>>();
+  const [modal, setModal] = useState<{
+    success: boolean;
+    error: boolean;
+    message: string;
+  }>({
+    success: false,
+    error: false,
+    message: '',
+  });
   const {login} = authStore();
 
   useEffect(() => {
@@ -93,13 +95,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsLoading(false);
       return;
     }
@@ -120,13 +116,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsLoading(false);
       return;
     }
@@ -150,13 +140,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsLoading(false);
       return;
     }
@@ -175,13 +159,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsLoading(false);
       return;
     }
@@ -203,26 +181,11 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsLoading(false);
       return;
     }
-    Toast.show(<AlertSuccess message={response.data} />, {
-      type: 'success',
-      placement: 'center',
-      duration: 4000,
-      animationType: 'zoom-in',
-      successColor: 'transparent',
-      onClose() {
-        navigation.navigate('ProfilePage');
-      },
-    });
+    setModal({success: true, error: false, message: response.data});
     resetForm();
     setIsLoading(false);
   };
@@ -482,5 +445,7 @@ export const UpdatePasswordHook = ({method, type, userId, contact}: Props) => {
     otp,
     id,
     setOtp,
+    modal,
+    setModal,
   };
 };

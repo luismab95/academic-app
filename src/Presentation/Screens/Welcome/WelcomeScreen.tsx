@@ -2,7 +2,6 @@ import {useState} from 'react';
 import {View, Text, Image, ActivityIndicator} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import {Toast} from 'react-native-toast-notifications';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AlertError} from '../../Components';
 import {IWelcomeData, welcomeData} from '../../Utils';
@@ -13,19 +12,14 @@ import {RootStackParams} from '../../Navigation';
 export const WelcomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
 
   const onRegisterDevice = async () => {
     if (loading) return;
     setLoading(true);
     const response = await createDevice();
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 4000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal(true);
       setLoading(false);
       return;
     }
@@ -63,43 +57,46 @@ export const WelcomeScreen = () => {
   );
 
   return (
-    <AppIntroSlider
-      renderItem={renderItem}
-      data={welcomeData}
-      onDone={async () => {
-        await onRegisterDevice();
-      }}
-      renderNextButton={() => (
-        <View style={WelcomeScreenStyles.buttonContainer}>
-          <Text
-            style={[
-              WelcomeScreenStyles.buttonText,
-              {fontFamily: 'Nunito-SemiBold'},
-            ]}>
-            Siguiente
-          </Text>
-        </View>
-      )}
-      renderDoneButton={() => (
-        <View style={WelcomeScreenStyles.buttonContainer}>
-          {loading ? (
-            <ActivityIndicator size={'small'} color={'white'} />
-          ) : (
+    <>
+      <AppIntroSlider
+        renderItem={renderItem}
+        data={welcomeData}
+        onDone={async () => {
+          await onRegisterDevice();
+        }}
+        renderNextButton={() => (
+          <View style={WelcomeScreenStyles.buttonContainer}>
             <Text
               style={[
                 WelcomeScreenStyles.buttonText,
                 {fontFamily: 'Nunito-SemiBold'},
               ]}>
-              Empezar
+              Siguiente
             </Text>
-          )}
-        </View>
-      )}
-      showSkipButton={false}
-      dotStyle={WelcomeScreenStyles.dotStyle}
-      bottomButton={true}
-      dotClickEnabled={false}
-      activeDotStyle={WelcomeScreenStyles.activeDotStyle}
-    />
+          </View>
+        )}
+        renderDoneButton={() => (
+          <View style={WelcomeScreenStyles.buttonContainer}>
+            {loading ? (
+              <ActivityIndicator size={'small'} color={'white'} />
+            ) : (
+              <Text
+                style={[
+                  WelcomeScreenStyles.buttonText,
+                  {fontFamily: 'Nunito-SemiBold'},
+                ]}>
+                Empezar
+              </Text>
+            )}
+          </View>
+        )}
+        showSkipButton={false}
+        dotStyle={WelcomeScreenStyles.dotStyle}
+        bottomButton={true}
+        dotClickEnabled={false}
+        activeDotStyle={WelcomeScreenStyles.activeDotStyle}
+      />
+      <AlertError show={modal} onClose={() => setModal(false)} />
+      </>
   );
 };

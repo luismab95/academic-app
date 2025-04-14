@@ -3,7 +3,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Swiper from 'react-native-swiper';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {RootStackParams} from '../../Navigation';
-import {AnimatedLoading, Header} from '../../Components';
+import {AlertError, AnimatedLoading, Header} from '../../Components';
 import {bannerData} from '../../Utils';
 import {
   HomeBannerSliderScreenStyles,
@@ -14,7 +14,7 @@ import {AcademicHook} from '../../../Shared';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
-  const {academicRecords, isLoading} = AcademicHook();
+  const {academicRecords, isLoading, modal, setModal} = AcademicHook();
 
   const handleNavigation = (id: number) => {
     if (id === 1) {
@@ -189,6 +189,7 @@ export const HomeScreen = () => {
           </ScrollView>
         </LinearGradient>
       )}
+      <AlertError show={modal} onClose={() => setModal(false)} />
     </>
   );
 };

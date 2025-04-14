@@ -8,6 +8,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faEnvelope,
+  faIdCard,
+  faUser,
+} from '@fortawesome/free-regular-svg-icons';
+import {faPhone} from '@fortawesome/free-solid-svg-icons';
+import {Formik} from 'formik';
 import {SettingsScreenStyles} from '../../Styles';
 import {
   AlertError,
@@ -18,20 +26,19 @@ import {
 } from '../../Components';
 import {EditUserSchema, servicesContainer} from '../../../Shared';
 import {User} from '../../../Domian';
-import {Toast} from 'react-native-toast-notifications';
-import {Formik} from 'formik';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {
-  faEnvelope,
-  faIdCard,
-  faUser,
-} from '@fortawesome/free-regular-svg-icons';
-import {faPhone} from '@fortawesome/free-solid-svg-icons';
 
 export const SettingScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
-
+  const [modal, setModal] = useState<{
+    success: boolean;
+    error: boolean;
+    message: string;
+  }>({
+    success: false,
+    error: false,
+    message: '',
+  });
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -39,13 +46,7 @@ export const SettingScreen = () => {
       setIsLoading(true);
       const response = await servicesContainer.user.getUserById();
       if (response === null) {
-        Toast.show(<AlertError />, {
-          type: 'danger',
-          placement: 'center',
-          duration: 3000,
-          animationType: 'zoom-in',
-          dangerColor: 'transparent',
-        });
+        setModal({success: false, error: true, message: ''});
         setIsLoading(false);
         return;
       }
@@ -70,24 +71,12 @@ export const SettingScreen = () => {
     );
 
     if (response === null) {
-      Toast.show(<AlertError />, {
-        type: 'danger',
-        placement: 'center',
-        duration: 3000,
-        animationType: 'zoom-in',
-        dangerColor: 'transparent',
-      });
+      setModal({success: false, error: true, message: ''});
       setIsLoadingForm(false);
       return;
     }
 
-    Toast.show(<AlertSuccess message={response.data} />, {
-      type: 'success',
-      placement: 'center',
-      duration: 4000,
-      animationType: 'zoom-in',
-      successColor: 'transparent',
-    });
+    setModal({success: true, error: false, message: response.data});
     setIsLoading(false);
     setIsLoadingForm(false);
     resetForm();
@@ -268,6 +257,28 @@ export const SettingScreen = () => {
           </ScrollView>
         </LinearGradient>
       )}
+
+      <AlertError
+        show={modal.error}
+        onClose={() =>
+          setModal({
+            error: false,
+            success: false,
+            message: '',
+          })
+        }
+      />
+      <AlertSuccess
+        message={modal.message}
+        show={modal.success}
+        onClose={() => {
+          setModal({
+            error: false,
+            success: false,
+            message: '',
+          });
+        }}
+      />
     </>
   );
 };
