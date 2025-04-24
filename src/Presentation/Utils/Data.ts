@@ -42,20 +42,20 @@ export const welcomeData: IWelcomeData[] = [
 
 export const bannerData: IBannerData[] = [
   {
-    id: 1,
-    bg_image: require('../../../assets/Images/carousel/carousel_1.png'),
-    bg_image_1: require('../../../assets/Images/carousel/carousel_image_1.png'),
-    title: 'Accede a tus Certificados Académicos',
-    offer: 'Rápido y seguro.',
-    buttonText: 'Explora ahora',
-    showButton: true,
-  },
-  {
     id: 2,
     bg_image: require('../../../assets/Images/carousel/caroules_2.png'),
     bg_image_1: require('../../../assets/Images/carousel/caroules_image_2.png'),
     title: 'Revisa nuestra Política de Privacidad',
     offer: 'Conoce cómo protegemos tu información.',
+    buttonText: 'Explora ahora',
+    showButton: true,
+  },
+  {
+    id: 1,
+    bg_image: require('../../../assets/Images/carousel/carousel_1.png'),
+    bg_image_1: require('../../../assets/Images/carousel/carousel_image_1.png'),
+    title: 'Accede a tus Certificados Académicos',
+    offer: 'Rápido y seguro.',
     buttonText: 'Explora ahora',
     showButton: true,
   },

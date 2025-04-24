@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {StatusBar, useWindowDimensions} from 'react-native';
+import {AppState, AppStateStatus, StatusBar} from 'react-native';
 import {AppNavigation} from './Presentation/Navigation';
 import {AnimatedLoading, CustomError} from './Presentation/Components';
 import {StorageAdapter} from './Infrastructure';
@@ -10,24 +10,23 @@ export default function App(): React.JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const [retry, setRetry] = useState<boolean>(false);
   const [errorService, setErrorService] = useState<boolean>(false);
-  const {height, width} = useWindowDimensions();
 
-  // useEffect(() => {
-  //   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-  //     if (nextAppState === 'background' || nextAppState === 'inactive') {
-  //       await logout!();
-  //     }
-  //   };
+  useEffect(() => {
+    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        await logout!();
+      }
+    };
 
-  //   const subscription = AppState.addEventListener(
-  //     'change',
-  //     handleAppStateChange,
-  //   );
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
 
-  //   return () => {
-  //     subscription.remove();
-  //   };
-  // }, []);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     setLoading(true);

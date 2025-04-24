@@ -19,7 +19,7 @@ import {
 } from '@fortawesome/free-regular-svg-icons/';
 import {Formik} from 'formik';
 import {servicesContainer, SignInSchema} from '../../../Shared';
-import {AlertError, CustomErrorInput} from '../../Components';
+import {AlertError, CustomBackHeader, CustomErrorInput} from '../../Components';
 import {SigninScreenStyles} from '../../Styles';
 import {RootStackParams} from '../../Navigation';
 
@@ -63,6 +63,7 @@ export const LoginScreen = ({navigation}: Props) => {
       <LinearGradient
         colors={['#E5ECF9', '#F6F7F9']}
         style={SigninScreenStyles.container}>
+        <CustomBackHeader>Iniciar Sesión</CustomBackHeader>
         <ScrollView>
           <Image
             style={SigninScreenStyles.signInImage}
