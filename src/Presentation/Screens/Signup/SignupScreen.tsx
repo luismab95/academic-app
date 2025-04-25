@@ -54,7 +54,7 @@ export const SignupScreen = ({navigation}: Props) => {
   }>({
     success: false,
     error: false,
-    privacy: true,
+    privacy: false,
     message: '',
   });
 
