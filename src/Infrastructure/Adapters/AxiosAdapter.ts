@@ -69,8 +69,6 @@ axiosApi.interceptors.response.use(
     return response;
   },
   async error => {
-    console.log('Error en la respuesta de Axios:', error.config);
-
     const originalRequest = error.config;
 
     if (error.response && error.response.status === 401) {
