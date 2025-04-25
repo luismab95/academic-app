@@ -1,8 +1,7 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../Utils';
 
-const {width} = Dimensions.get('window');
-
+const {width, height} = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
@@ -10,14 +9,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
   },
-  buttonContainer: {
-    backgroundColor: Colors.PRIMARY.PRIMARY_RETRO_BLUE,
-    padding: 16,
-    borderRadius: 8,
-    marginHorizontal: 16,
-    width: '100%',
-  },
+
   buttonText: {color: 'white', textAlign: 'center', fontSize: 16},
+  buttonTextCancel: {
+    color: Colors.ERROR,
+    textAlign: 'center',
+    fontSize: 16,
+    textDecorationLine: 'underline',
+  },
+
   image: {
     width: 250,
     height: 250,
@@ -72,12 +72,26 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 16,
   },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+
+  buttonContainer: {
+    backgroundColor: Colors.PRIMARY.PRIMARY_RETRO_BLUE,
+    padding: 16,
     borderRadius: 8,
-    minWidth: '48%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginHorizontal: 16,
+    width: '100%',
+  },
+
+  buttonDisabled: {
+    backgroundColor: Colors.PRIMARY.PRIMARY_QUEER_BLUE,
+  },
+
+  scrollContainer: {
+    height: height * 0.3,
+  },
+
+  closeIcon: {
+    position: 'absolute',
+    top: 26,
+    right: 26,
   },
 });

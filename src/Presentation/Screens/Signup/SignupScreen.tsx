@@ -20,7 +20,12 @@ import {
   faUser,
   faIdCard,
 } from '@fortawesome/free-regular-svg-icons/';
-import {AlertError, AlertSuccess, CustomErrorInput} from '../../Components';
+import {
+  AlertError,
+  AlertPrivacy,
+  AlertSuccess,
+  CustomErrorInput,
+} from '../../Components';
 import {User} from '../../../Domian';
 import {RegisterScreenStyles} from '../../Styles';
 import {servicesContainer, SignUpSchema} from '../../../Shared';
@@ -32,33 +37,59 @@ interface Props {
 
 export const SignupScreen = ({navigation}: Props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [formValues, setFormValues] = useState<{
+    values: Partial<User>;
+    resetForm: () => void;
+  }>({
+    values: {},
+    resetForm: () => {},
+  });
+
   const [isButtonSpinner, setIsButtonSpinner] = useState<boolean>(false);
   const [modal, setModal] = useState<{
     success: boolean;
     error: boolean;
+    privacy: boolean;
     message: string;
   }>({
     success: false,
     error: false,
+    privacy: true,
     message: '',
   });
 
-  const handleRegister = async (
-    values: Partial<User>,
-    resetForm: () => void,
-  ) => {
+  const handleRegister = async () => {
     setIsButtonSpinner(true);
-    const response = await servicesContainer.auth.signUp(values as User);
+    const response = await servicesContainer.auth.signUp(
+      formValues.values as User,
+    );
 
     if (response === null) {
-      setModal({success: false, error: true, message: ''});
+      setModal({success: false, error: true, message: '', privacy: false});
       setIsButtonSpinner(false);
+      setFormValues({values: {}, resetForm: () => {}});
       return;
     }
 
-    setModal({success: true, error: false, message: response.data});
-    resetForm();
+    setModal({
+      success: true,
+      error: false,
+      privacy: false,
+      message: response.data,
+    });
+    formValues.resetForm();
+    setFormValues({values: {}, resetForm: () => {}});
     setIsButtonSpinner(false);
+  };
+
+  const handlePrivacy = (values: Partial<User>, resetForm: () => void) => {
+    setModal({
+      error: false,
+      success: false,
+      privacy: true,
+      message: '',
+    });
+    setFormValues({values, resetForm});
   };
 
   return (
@@ -100,7 +131,7 @@ export const SignupScreen = ({navigation}: Props) => {
               validationSchema={SignUpSchema}
               validateOnMount
               onSubmit={(values, {resetForm}) =>
-                handleRegister(values, resetForm)
+                handlePrivacy(values, resetForm)
               }>
               {({
                 handleChange,
@@ -292,6 +323,7 @@ export const SignupScreen = ({navigation}: Props) => {
           setModal({
             error: false,
             success: false,
+            privacy: false,
             message: '',
           })
         }
@@ -303,9 +335,24 @@ export const SignupScreen = ({navigation}: Props) => {
           setModal({
             error: false,
             success: false,
+            privacy: false,
             message: '',
           });
           navigation.navigate('Login');
+        }}
+      />
+      <AlertPrivacy
+        show={modal.privacy}
+        onClose={async value => {
+          setModal({
+            error: false,
+            success: false,
+            privacy: false,
+            message: '',
+          });
+          if (value) {
+            await handleRegister();
+          }
         }}
       />
     </>

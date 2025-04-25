@@ -10,9 +10,7 @@ import {
 } from 'react-native';
 import Pdf from 'react-native-pdf';
 import LinearGradient from 'react-native-linear-gradient';
-import {
-  useFocusEffect,
-} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faKey} from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
@@ -260,10 +258,10 @@ export const CertificateDownloadScreen = () => {
 
   const handleDownloadPdf = async () => {
     const filename = `certificado-${moment().format('YYYY-MM-DD_hhmmss')}.pdf`;
-    const filePath = await base64ToTempFile(source.uri, filename);
+    await base64ToTempFile(source.uri, filename);
     setModal({
       success: true,
-      message: `Documento guardado en ${filePath}, revisa tu carpeta de descargas.`,
+      message: `Documento guardado como ${filename}, revisa tu carpeta de descargas.`,
     });
   };
 

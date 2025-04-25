@@ -123,7 +123,7 @@ export const ProfileScreen = () => {
                       Seguridad
                     </Text>
                     <Text
-                    numberOfLines={2}
+                      numberOfLines={2}
                       style={[
                         ProfileScreenStyles.regularText,
                         {fontFamily: 'Nunito-Regular'},

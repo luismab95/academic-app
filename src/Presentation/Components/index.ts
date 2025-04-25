@@ -8,3 +8,4 @@ export * from "./Otp/CustomOtpInput";
 export * from "./Header/Header";
 export * from "./Modal/AlertError";
 export * from "./Modal/AlertSuccess";
+export * from "./Modal/AlertPrivacy";

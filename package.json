@@ -47,7 +47,7 @@
     "react-native-otp-textinput": "^1.1.6",
     "react-native-pdf": "^6.7.7",
     "react-native-quick-crypto": "^0.7.12",
-    "react-native-reanimated": "^3.17.1",
+    "react-native-reanimated": "^3.17.5",
     "react-native-responsive-dimensions": "^3.1.1",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-safe-area-context": "^5.2.0",
@@ -80,8 +80,5 @@
     "react-native-dotenv": "^3.4.11",
     "react-test-renderer": "18.3.1",
     "typescript": "5.0.4"
-  },
-  "engines": {
-    "node": ">=18"
   }
 }
