@@ -161,7 +161,7 @@ export const CertificateDownloadScreen = () => {
               <>
                 <View>
                   <TextInput
-                    placeholder="Código de verificaciòn"
+                    placeholder="Código de verificación"
                     style={SigninScreenStyles.input}
                     keyboardType="default"
                     value={values.code}

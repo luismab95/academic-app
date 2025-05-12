@@ -39,6 +39,8 @@ export class AuthService implements AuthGateway {
     device: string,
   ): Promise<GeneralResponse<AuthSession> | null> {
     try {
+      email = email.toLowerCase();
+
       const ipAddress = await NetworkInfo.getIPV4Address();
       const {data} = await axiosApi.post<GeneralResponse<AuthSession>>(
         '/auth/sign-in/mfa',
