@@ -4,6 +4,8 @@
 
 # Enviroment
 .env
+# SONNAR
+.scannerwork
 
 # Xcode
 #
@@ -30,6 +32,8 @@ DerivedData
 build/
 .idea
 .gradle
+.bundle
+.kotlin
 local.properties
 *.iml
 *.hprof
@@ -75,3 +79,5 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+package-lock.json
+yarb.lock
